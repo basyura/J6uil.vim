@@ -7,30 +7,34 @@ function! J6uil#thread#run(cmd, ...)
     return thread
 endfunction
 
+function! J6uil#thread#is_exists()
+    return !empty(g:J6uil_thread_list)
+endfunction
+
 function! s:release(threads)
     for thread in a:threads
-        call thread.release()
+        echo 'killed ' . thread.vimproc.pid
+        call vimproc#kill(thread.vimproc.pid, 9)
     endfor
 endfunction
 
-if has_key(g:, "thread_list")
-    call s:release(values(g:thread_list))
+function! J6uil#thread#release()
+    call s:release(values(g:J6uil_thread_list))
+endfunction
+
+if has_key(g:, "J6uil_thread_list")
+    call s:release(values(g:J6uil_thread_list))
 endif
-let g:thread_list = {}
 
-let g:thread_counter = 0
+" for reload
+let g:J6uil_thread_list = {}
 
+let g:J6uil_thread_counter = 0
 
 augroup vim-thread
     autocmd!
-    autocmd! CursorHold,CursorHoldI * call s:update(values(g:thread_list))
+    autocmd! CursorHold,CursorHoldI * call s:update(values(g:J6uil_thread_list))
 augroup END
-
-augroup vim-j6uil
-    autocmd!
-    autocmd! CursorHold * silent! call feedkeys("g\<Esc>", "n")
-augroup END
-
 
 function! s:update(threads)
     for thread in a:threads
@@ -72,14 +76,14 @@ function! s:thread_update(thread)
 endfunction
 
 function! s:thread_entry(thread)
-    let g:thread_list[g:thread_counter] = a:thread
-    let a:thread.id = g:thread_counter
-    let g:thread_counter += 1
+    let g:J6uil_thread_list[g:J6uil_thread_counter] = a:thread
+    let a:thread.id = g:J6uil_thread_counter
+    let g:J6uil_thread_counter += 1
 endfunction
 
 
 function! s:thread_release(thread)
-    unlet g:thread_list[a:thread.id]
+    unlet g:J6uil_thread_list[a:thread.id]
 endfunction
 
 function! s:make_thread(cmd, ...)

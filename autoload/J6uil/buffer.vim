@@ -7,6 +7,12 @@ let s:last_bufnr = 0
 
 let s:current_room = '' 
 
+
+augroup vim-j6uil
+    autocmd!
+    autocmd! CursorHold * silent! call feedkeys("g\<Esc>", "n")
+augroup END
+
 function! J6uil#buffer#switch(room, messages)
   let s:current_room = a:room
   call s:switch_buffer()
@@ -68,8 +74,7 @@ function! s:update_message(message)
 endfunction
 
 function! s:update_presence(presence)
-  let mesages = a:message
-  call append(line('$'), s:ljust('', 12) . '   ' . message.text)
+  call append(line('$'), s:ljust('', 12) . '   ' . a:presence.text)
 endfunction
 
 function! s:switch_buffer()
@@ -146,8 +151,20 @@ endfunction
 function! s:define_default_settings_say()
   augroup J6uil_say
     nnoremap <silent> <buffer> <Enter> :call <SID>post_message()<CR>
+    inoremap <silent> <buffer> <C-CR>  <ESC>:call <SID>post_message()<CR>
     nnoremap <silent> <buffer> <C-j> :bd!<CR>
   augroup END
+endfunction
+
+function! s:post_message()
+  let text = s:get_text()
+  if J6uil#say(s:current_room, text)
+    bd!
+  endif
+endfunction
+
+function! s:get_text()
+  return matchstr(join(getline(1, '$'), "\n"), '^\_s*\zs\_.\{-}\ze\_s*$')
 endfunction
 
 function! s:ljust(str, size, ...)

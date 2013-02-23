@@ -15,6 +15,9 @@ function! J6uil#lingr#new(username, password)
 endfunction
 
 function! s:lingr.login()
+
+  call J6uil#thread#release()
+
   let ret = s:post('session/create', {
               \ 'app_key'  : '5xUaIa',
               \ 'user'     : self.username,
@@ -45,7 +48,7 @@ function! s:lingr.verify_and_relogin()
     return 1
   endif
 
-  call s:lingr.login()
+  call self.login()
   return 0
 endfunction
 
@@ -65,7 +68,7 @@ function! s:lingr.say(room, msg)
         \ 'session' : self.session,
         \ 'room'    : a:room,
         \ 'text'    : a:msg,
-        \ })
+        \ }).status == 'ok'
 
 endfunction
 
