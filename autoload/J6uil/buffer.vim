@@ -137,6 +137,7 @@ function! s:buf_setting()
   setlocal noswapfile
   setlocal modifiable
   setlocal nolist
+  setlocal nonu
   setlocal buftype=nofile
   call s:define_default_key_mappings()
   setfiletype J6uil
