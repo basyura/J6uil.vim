@@ -9,6 +9,44 @@ let s:buf_name = 'J6uil'
 
 let s:last_bufnr = 0
 
+
+function! J6uil#start(room)
+
+  if !exists('s:j6uil')
+    let s:j6uil = J6uil#new(g:J6uil_user, g:J6uil_password)
+    call s:j6uil.login()
+    let s:counter = s:j6uil.subscribe()
+    call s:j6uil.observe()
+  endif
+
+  if !s:j6uil.verify()
+    call s:j6uil.observe()
+    call s:j6uil.login()
+  endif
+
+  let s:room = a:room
+  call s:switch_buffer()
+  call s:buf_setting()
+  call s:define_default_key_mappings()
+
+  silent %delete _
+  call append(0, '-- J6uil --')
+  delete _
+  "let s:counter = s:j6uil.subscribe(a:room)
+  for message in  s:j6uil.room_show(a:room).rooms[0].messages
+    let list = split(message.text, '\n')
+    call append(line('$'), s:ljust(message.nickname, 12) . ' : ' . list[0])
+    for msg in list[1:]
+      call append(line('$'), s:ljust('', 12) . '   ' . msg)
+    endfor
+  endfor
+  execute "normal! G"
+  setlocal nomodified
+    "setlocal noswapfile
+    "setlocal nolist
+    "setlocal nomodified
+endfunction
+
 function! s:J6uil.login()
   let ret = s:post('session/create', {
               \ 'app_key'  : '5xUaIa',
@@ -31,7 +69,7 @@ function! s:J6uil.verify()
   return s:post('session/verify', {
               \ 'app_key'  : '5xUaIa',
               \ 'session' : self.session,
-              \ })
+              \ }).status == 'ok'
 endfunction
 
 function! s:J6uil.get_rooms()
@@ -54,10 +92,13 @@ function! s:J6uil.say(room, msg)
 
 endfunction
 
-function! s:J6uil.subscribe(room)
+function! s:J6uil.subscribe(...)
+
+  let rooms = a:0 ? a:1 : join(self.get_rooms(), ',')
+
   return s:get('room/subscribe', {
         \ 'session' : self.session,
-        \ 'rooms' : a:room,
+        \ 'rooms' : rooms,
         \ }).counter
 endfunction
 
@@ -110,14 +151,13 @@ function! s:update_buf(res)
   endif
   setlocal nomodified
 
-  call s:j6uil.observe(s:room, s:counter)
+  call s:j6uil.observe()
   silent! call feedkeys("g\<Esc>", "n")
 endfunction
 
-function! s:J6uil.observe(room, counter)
-  let counter = a:counter
+function! s:J6uil.observe()
   let cmd = 'curl -L -s -k -i "http://lingr.com:8080/api/event/observe?session=' 
-        \ . self.session . '&counter=' . string(counter) . '"'
+        \ . self.session . '&counter=' . string(s:counter) . '"'
   call g:thread(cmd, function('s:update_buf'))
 endfunction
 
@@ -140,54 +180,6 @@ function! J6uil#new(username, password)
   return j6uil
 endfunction
 
-function! J6uil#start(room)
-
-  let verified = 0
-
-  if !exists('s:j6uil')
-    let s:j6uil = J6uil#new(g:J6uil_user, g:J6uil_password)
-    call s:j6uil.login()
-    call s:j6uil.subscribe(s:j6uil.get_rooms())
-  else
-    if s:j6uil.verify().status == 'error'
-      call s:j6uil.login()
-    else
-      let verified = 1
-    endif
-  endif
-
-  let s:room = a:room
-  call s:switch_buffer()
-  call s:buf_setting()
-  call s:define_default_key_mappings()
-
-  silent %delete _
-  call append(0, '-- J6uil --')
-  delete _
-  let s:counter = s:j6uil.subscribe(a:room)
-  for message in  s:j6uil.room_show(a:room).rooms[0].messages
-    let list = split(message.text, '\n')
-    call append(line('$'), s:ljust(message.nickname, 12) . ' : ' . list[0])
-    for msg in list[1:]
-      call append(line('$'), s:ljust('', 12) . '   ' . msg)
-    endfor
-  endfor
-  execute "normal! G"
-  setlocal nomodified
-  "call j6uil.room_show('basyura')
-  "echo j6uil.say('vim', 'test')
-
-  "call s:bufMgr.open("aaaa")
-    "setlocal noswapfile
-    "setlocal nolist
-    "setlocal nomodified
-  
-  
-
-  if !verified
-    call s:j6uil.observe('basyura', s:counter)
-  endif
-endfunction
 
 function! s:post_message()
   call s:j6uil.say(s:room, s:get_text())
