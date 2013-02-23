@@ -7,6 +7,7 @@ let s:last_bufnr = 0
 
 let s:current_room = '' 
 
+let s:before_msg_user = ''
 
 augroup J6uil-buffer
     autocmd!
@@ -67,7 +68,16 @@ endfunction
 function! s:update_message(message)
   let message = a:message
   let list = split(message.text, '\n')
-  call append(line('$'), s:ljust(message.nickname, 12) . ' : ' . list[0])
+
+  let nickname = message.nickname
+  if nickname == s:before_msg_user || nickname == 'URL Info.'
+    let nickname = '               '
+  else
+    let s:before_msg_user = nickname
+    let nickname = s:ljust(nickname, 12) . ' : '
+  endif
+
+  call append(line('$'), nickname . list[0])
   for msg in list[1:]
     call append(line('$'), s:ljust('', 12) . '   ' . msg)
   endfor
