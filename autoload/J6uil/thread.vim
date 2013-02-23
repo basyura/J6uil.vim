@@ -13,7 +13,7 @@ endfunction
 
 function! s:release(threads)
     for thread in a:threads
-        echo 'killed ' . thread.vimproc.pid
+        echomsg 'J6uil killed ' . thread.vimproc.pid
         call vimproc#kill(thread.vimproc.pid, 9)
     endfor
 endfunction
@@ -31,7 +31,7 @@ let g:J6uil_thread_list = {}
 
 let g:J6uil_thread_counter = 0
 
-augroup vim-thread
+augroup J6uil-thread
     autocmd!
     autocmd! CursorHold,CursorHoldI * call s:update(values(g:J6uil_thread_list))
 augroup END

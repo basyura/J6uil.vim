@@ -5,18 +5,17 @@ let s:api_root = 'http://lingr.com/api/'
 
 function! J6uil#start(room)
 
-  let verified = 0
-
   if !exists('s:lingr')
     let s:lingr = J6uil#lingr#new(g:J6uil_user, g:J6uil_password)
   else
-    let verified = s:lingr.verify_and_relogin()
+    call s:lingr.verify_and_relogin()
   endif
+
 
   let messages = s:lingr.room_show(a:room)
   call J6uil#buffer#switch(a:room, messages)
 
-  if !verified || !J6uil#thread#is_exists()
+  if !J6uil#thread#is_exists()
     let s:counter = s:lingr.subscribe()
     call s:lingr.observe(s:counter, function('J6uil#__update'))
   endif

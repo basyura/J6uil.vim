@@ -8,7 +8,7 @@ let s:last_bufnr = 0
 let s:current_room = '' 
 
 
-augroup vim-j6uil
+augroup J6uil-buffer
     autocmd!
     autocmd! CursorHold * silent! call feedkeys("g\<Esc>", "n")
 augroup END
