@@ -36,6 +36,7 @@ say
 
   - s on J6uil buffer in normal mode
   - &lt;CR&gt; in normal mode
+  - &lt;C-CR&gt; in insert mode
 
 
 Reference
