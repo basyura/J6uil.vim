@@ -1,6 +1,12 @@
 let s:save_cpo = &cpo
 set cpo&vim
 
+function! J6uil#thread#run(cmd, ...)
+    let thread = call("s:make_thread", [a:cmd] + a:000)
+    call thread.run()
+    return thread
+endfunction
+
 function! s:release(threads)
     for thread in a:threads
         call thread.release()
@@ -123,11 +129,6 @@ function! s:make_thread(cmd, ...)
     return self
 endfunction
 
-function! g:thread(cmd, ...)
-    let thread = call("s:make_thread", [a:cmd] + a:000)
-    call thread.run()
-    return thread
-endfunction
 
 
 let &cpo = s:save_cpo
