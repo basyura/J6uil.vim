@@ -35,7 +35,7 @@ subscribe
 say
 
   - s on J6uil buffer in normal mode
-  - <CR> in normal mode
+  - &lt;CR&gt; in normal mode
 
 
 Reference
