@@ -28,7 +28,15 @@ Settings
 Usage
 -----
 
+subscribe
+
     :J6uil room
+
+say
+
+  - s on J6uil buffer in normal mode
+  - <CR> in normal mode
+
 
 Reference
 ---------
