@@ -35,7 +35,7 @@ function! s:J6uil.verify()
 endfunction
 
 function! s:J6uil.get_rooms()
-  return s:get('user/get_rooms', {'session' : self.session})
+  return s:get('user/get_rooms', {'session' : self.session}).rooms
 endfunction
 
 function! s:J6uil.room_show(rooms)
@@ -89,6 +89,10 @@ function! s:update_buf(res)
   if has_key(json, 'events')
     for event in json.events
       if has_key(event, 'message')
+        if event.message.room != s:room
+          echo '[' . event.message.room . '] ' . event.message.nickname . ' : ' . substitute(event.message.text, '\n', '', 'g')
+          continue
+        endif
         let list = split(event.message.text, '\n')
         call append(line('$'), s:ljust(event.message.nickname, 12) . ' : ' . list[0])
         for msg in list[1:]
@@ -143,6 +147,7 @@ function! J6uil#start(room)
   if !exists('s:j6uil')
     let s:j6uil = J6uil#new(g:J6uil_user, g:J6uil_password)
     call s:j6uil.login()
+    call s:j6uil.subscribe(s:j6uil.get_rooms())
   else
     if s:j6uil.verify().status == 'error'
       call s:j6uil.login()
@@ -169,7 +174,6 @@ function! J6uil#start(room)
   endfor
   execute "normal! G"
   setlocal nomodified
-  "call j6uil.get_rooms()
   "call j6uil.room_show('basyura')
   "echo j6uil.say('vim', 'test')
 
@@ -396,6 +400,7 @@ endfunction
 function! s:define_default_settings_say()
   augroup J6uil_say
     nnoremap <silent> <buffer> <Enter> :call <SID>post_message()<CR>
+    nnoremap <silent> <buffer> <C-j> :bd!<CR>
   augroup END
 endfunction
 
