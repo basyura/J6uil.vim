@@ -3,14 +3,23 @@ set cpo&vim
 
 let s:api_root = 'http://lingr.com/api/'
 
-function! J6uil#start(room)
+function! J6uil#subscribe(room)
 
   if !exists('s:lingr')
-    let s:lingr = J6uil#lingr#new(g:J6uil_user, g:J6uil_password)
+    try
+      let user = exists('g:J6uil_user')     ? g:J6uil_user     : g:lingr_vim_user
+      let pass = exists('g:J6uil_password') ? g:J6uil_password : g:lingr_vim_password
+    catch
+      echohl Error
+      echo 'you must define g:J6uil_user or g:lingr_vim_user'
+      echo '                g:J6uil_password or g:lingr_vim_password'
+      echohl None
+      return
+    endtry
+    let s:lingr = J6uil#lingr#new(user, pass)
   else
     call s:lingr.verify_and_relogin()
   endif
-
 
   let messages = s:lingr.room_show(a:room)
   call J6uil#buffer#switch(a:room, messages)
