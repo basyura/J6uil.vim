@@ -8,6 +8,12 @@ License
 
 MIT License
 
+Requires
+--------
+
+- [webapi-vim](https://github.com/mattn/webapi-vim)
+- [vimproc](https://github.com/Shougo/vimproc)
+
 Settings
 ---------
 
@@ -23,3 +29,8 @@ Usage
 -----
 
     :J6uil room
+
+Reference
+---------
+
+- [Vim で簡単に非同期処理を行うラッパを書いた](http://d.hatena.ne.jp/osyo-manga/20121010/1349795470)
