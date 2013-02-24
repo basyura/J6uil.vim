@@ -43,7 +43,9 @@ function! J6uil#__update(res)
 
     let json = webapi#json#decode(content)
   catch e
-    echohl Error | echo 'error. stopped oberve lingr ' | echohl None
+    call J6uil#thread#release()
+    echohl Error | echo 'error. retried oberve lingr ' | echohl None
+    call s:lingr.observe(s:counter, function('J6uil#__update'))
     return
   endtry
   
