@@ -84,6 +84,9 @@ function! s:update_message(message)
 endfunction
 
 function! s:update_presence(presence)
+  if presence.status == 'offline'
+    return
+  endif
   call append(line('$'), s:ljust('', 12) . '   ' . a:presence.text)
 endfunction
 
