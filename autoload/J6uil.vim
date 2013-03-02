@@ -50,7 +50,7 @@ function! J6uil#__update(res)
     endif
 
     let json = webapi#json#decode(content)
-  catch e
+  catch
     " normal? error
     if a:res != ''
       echohl Error | echo 'error. retried oberve lingr ' | echohl None
