@@ -53,6 +53,7 @@ function! J6uil#__update(res)
   catch
     " normal? error
     if a:res != ''
+      call J6uil#buffer#append_message('error. retried oberve lingr ')
       echohl Error | echo 'error. retried oberve lingr ' | echohl None
       call s:lingr.observe(s:counter, function('J6uil#__update'))
       let s:connect_time = localtime()
@@ -89,6 +90,7 @@ function! s:check_connection()
   catch
     redraw
     echohl Error | echomsg "retried ... "  | echohl None
+    call J6uil#buffer#append_message('retried to connecting ...')
     sleep 5
     call s:check_connection()
   endtry

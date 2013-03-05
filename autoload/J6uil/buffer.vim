@@ -49,6 +49,12 @@ function! J6uil#buffer#update(json)
   setlocal nomodified
 endfunction
 
+function! J6uil#buffer#append_message(message)
+  call s:switch_buffer()
+  call s:buf_setting()
+  call append(line('$'), a:message)
+endfunction
+
 function! s:update(events)
   let counter = 0
   for event in  a:events
