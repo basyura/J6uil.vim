@@ -82,9 +82,16 @@ function! s:check_connection()
     return
   endif
 
-  call s:lingr.verify_and_relogin()
-  call s:observe_start(s:lingr)
-  echohl Error | echomsg "check connection is over limit. so connected"  | echohl None
+  try
+    call s:lingr.verify_and_relogin()
+    call s:observe_start(s:lingr)
+    echohl Error | echomsg "check connection is over limit. so connected"  | echohl None
+  catch
+    redraw
+    echohl Error | echomsg "retried ... "  | echohl None
+    sleep 5
+    call s:check_connection()
+  endtry
 endfunction
 
 augroup J6uil

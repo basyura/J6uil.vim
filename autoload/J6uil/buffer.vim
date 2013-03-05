@@ -1,6 +1,9 @@
 let s:save_cpo = &cpo
 set cpo&vim
 
+let s:Vital    = vital#of('J6uil')
+let s:DateTime = s:Vital.import('DateTime')
+
 let s:buf_name = 'J6uil'
 
 let s:last_bufnr = 0
@@ -68,6 +71,9 @@ endfunction
 function! s:update_message(message)
   let message = a:message
   let list = split(message.text, '\n')
+
+  let date_time = s:DateTime.from_format(message.timestamp . ' +0000', '%Y-%m-%dT%H:%M:%SZ %z', 'C')
+  let list[-1] = list[-1] . '  ' . date_time.strftime("%m/%d %H:%M")
 
   let nickname = message.nickname
   if nickname == s:before_msg_user || nickname == 'URL Info.'
