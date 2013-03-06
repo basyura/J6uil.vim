@@ -109,7 +109,13 @@ function! s:update_message(message)
 endfunction
 
 function! s:update_presence(presence)
-  if a:presence.status == 'offline'
+  if g:J6uil_echo_presence
+    echo a:presence.text
+  endif
+  if !g:J6uil_display_offline && a:presence.status == 'offline'
+    return
+  endif
+  if !g:J6uil_display_online  && a:presence.status == 'online'
     return
   endif
   call append(line('$'), s:ljust('', 12) . '   ' . a:presence.text)
