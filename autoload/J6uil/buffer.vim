@@ -38,13 +38,26 @@ function! J6uil#buffer#switch(room, messages)
   setlocal nomodified
 endfunction
 
+let s:que = []
+
 function! J6uil#buffer#update(json)
+
+  call add(s:que, a:json) 
+
+  if bufname("%") != s:buf_name
+    return
+  endif
+
   call s:switch_buffer()
   call s:buf_setting()
 
-  if s:update(a:json.events) > 0
-    execute "normal! G"
-  endi
+  for json in s:que
+    if s:update(json.events) > 0
+      execute "normal! G"
+    endi
+  endfor
+
+  let s:que = []
 
   setlocal nomodified
 endfunction
