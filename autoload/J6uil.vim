@@ -29,6 +29,17 @@ function! J6uil#subscribe(room)
 
 endfunction
 
+function! J6uil#reconnect()
+  let room = J6uil#buffer#current_room()
+  if room == ''
+    echo 'no connection'
+    return
+  endif
+  call J6uil#buffer#switch(room, [])
+  silent %delete _
+  call J6uil#subscribe(room)
+endfunction
+
 function! s:observe_start(lingr)
   " めちゃくちゃになってきたな・・・
   let lingr = a:lingr
@@ -90,9 +101,12 @@ function! s:check_connection()
   catch
     redraw
     echohl Error | echomsg "retried ... "  | echohl None
-    call J6uil#buffer#append_message('retried to connecting ...')
-    sleep 5
+    call J6uil#buffer#append_message('reconnecting ...')
+    sleep 2
     call s:check_connection()
+    " to delete refresh buffer
+    "let s:current_room = ''
+    "call J6uil#subscribe(a:J6uil_current_room)
   endtry
 endfunction
 

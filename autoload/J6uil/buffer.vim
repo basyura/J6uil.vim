@@ -13,9 +13,13 @@ let s:current_room = ''
 let s:before_msg_user = ''
 
 augroup J6uil-buffer
-    autocmd!
-    autocmd! CursorHold * silent! call feedkeys("g\<Esc>", "n")
+  autocmd!
+  autocmd! CursorHold * silent! call feedkeys("g\<Esc>", "n")
 augroup END
+
+function! J6uil#buffer#current_room()
+  return s:current_room
+endfunction
 
 function! J6uil#buffer#switch(room, messages)
   let s:current_room = a:room
