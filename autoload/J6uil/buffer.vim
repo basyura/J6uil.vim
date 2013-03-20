@@ -55,8 +55,9 @@ function! J6uil#buffer#update(json)
   call s:switch_buffer()
   call s:buf_setting()
 
+  let is_bottom = line(".") == line("$")
   for json in s:que
-    if s:update(json.events) > 0
+    if s:update(json.events) > 0 && is_bottom
       execute "normal! G"
     endi
   endfor
