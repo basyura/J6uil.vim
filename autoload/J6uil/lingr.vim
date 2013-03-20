@@ -90,6 +90,15 @@ function! s:lingr.observe(counter, func)
   call J6uil#thread#run(cmd, a:func)
 endfunction
 
+function! s:lingr.get_archives(room, before)
+  let ret = s:get('room/get_archives', {
+        \ 'session' : self.session,
+        \ 'room'    : a:room,
+        \ 'before'  : a:before,
+        \ }).messages
+  return ret
+endfunction
+
 function! s:get(url, param)
   let res = webapi#http#get(s:api_root . a:url, a:param)
   return webapi#json#decode(res.content)

@@ -6,6 +6,8 @@ let s:DateTime = s:Vital.import('DateTime')
 
 let s:buf_name = 'J6uil'
 
+let s:archive_statement = '-- archive --'
+
 let s:last_bufnr = 0
 
 let s:current_room = '' 
@@ -26,17 +28,18 @@ function! J6uil#buffer#switch(room, messages)
   call s:switch_buffer()
   call s:buf_setting()
 
-  if exists('b:J6uil_current_room') && b:J6uil_current_room != a:room
+"  if !exists('b:J6uil_current_room') || b:J6uil_current_room != a:room
     silent %delete _
-    call append(0, '--' . a:room . '--')
-    delete _
-  endif
+"  endif
 
   let b:J6uil_current_room = a:room
 
   for message in a:messages
     call s:update_message(message)
   endfor
+
+  call append(line('$'), '-- room : ' . a:room . ' --')
+  delete _
 
   execute "normal! G"
   setlocal nomodified
@@ -73,6 +76,33 @@ function! J6uil#buffer#append_message(message)
   call append(line('$'), a:message)
 endfunction
 
+function! J6uil#buffer#load_archives(room, messages)
+  " 暫定
+  for message in a:messages
+    let list = split(message.text, '\n')
+
+    let date_time = s:DateTime.from_format(message.timestamp . ' +0000', '%Y-%m-%dT%H:%M:%SZ %z', 'C')
+    let list[-1] = list[-1] . '  ' . date_time.strftime("%m/%d %H:%M")
+
+    let nickname = message.nickname
+    if nickname == s:before_msg_user || nickname == 'URL Info.'
+      let nickname = '               '
+    else
+      let s:before_msg_user = nickname
+      let nickname = s:ljust(nickname, 12) . ' : '
+    endif
+
+    call append(line('.'), nickname . list[0])
+    execute "normal! \<Down>"
+    for msg in list[1:]
+      call append(line('.'), s:ljust('', 12) . '   ' . msg)
+      execute "normal! \<Down>"
+    endfor
+  endfor
+
+  let  b:J6uil_oldest_id = a:messages[0].id
+endfunction
+
 function! s:update(events)
   let counter = 0
   for event in  a:events
@@ -106,6 +136,11 @@ function! s:update_message(message)
     let s:before_msg_user = nickname
     let nickname = s:ljust(nickname, 12) . ' : '
   endif
+
+  if getline(1) == ''
+    call append(0, s:archive_statement)
+    let  b:J6uil_oldest_id = message.id
+  end
 
   call append(line('$'), nickname . list[0])
   for msg in list[1:]
@@ -195,6 +230,7 @@ endfunction
 function! s:define_default_key_mappings()
   augroup J6uil_buffer
     nnoremap <silent> <buffer> s :call <SID>open_say_buffer()<CR>
+    nnoremap <silent> <buffer> <CR>    :call <SID>enter_action()<CR>
   augroup END
 endfunction
 
@@ -203,10 +239,17 @@ function! s:define_default_settings_say()
     nnoremap <silent> <buffer> <Enter> :call <SID>post_message()<CR>
     inoremap <silent> <buffer> <C-CR>  <ESC>:call <SID>post_message()<CR>
     nnoremap <silent> <buffer> <C-j> :bd!<CR>
-
     setlocal nonu
   augroup END
 endfunction
+
+function! s:enter_action()
+  if getline(".") == s:archive_statement
+    call J6uil#load_archives(s:current_room, b:J6uil_oldest_id)
+    return
+  endif
+endfunction
+
 
 function! s:post_message()
   let text = s:get_text()

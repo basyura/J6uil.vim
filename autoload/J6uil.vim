@@ -35,9 +35,15 @@ function! J6uil#reconnect()
     echo 'no connection'
     return
   endif
+  " todo
   call J6uil#buffer#switch(room, [])
   silent %delete _
   call J6uil#subscribe(room)
+endfunction
+
+function! J6uil#load_archives(room, oldest_id)
+  let messages = s:lingr.get_archives(a:room, a:oldest_id)
+  call J6uil#buffer#load_archives(a:room, messages)
 endfunction
 
 function! s:observe_start(lingr)
