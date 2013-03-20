@@ -5,6 +5,10 @@ let g:J6uil_display_offline = 0
 let g:J6uil_display_online  = 0
 let g:J6uil_echo_presence   = 1
 
+if !filereadable(expand("~/.J6uil/icon"))
+  call mkdir(expand("~/.J6uil/icon"), 'p')
+endif
+
 command! -nargs=1 J6uil :call s:start(<f-args>)
 
 command! -nargs=0 J6uilReconnect :call J6uil#reconnect()
