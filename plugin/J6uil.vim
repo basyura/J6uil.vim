@@ -1,10 +1,16 @@
 let s:save_cpo = &cpo
 set cpo&vim
 
-let g:J6uil_display_offline = 0
-let g:J6uil_display_online  = 0
-let g:J6uil_echo_presence   = 1
-let g:J6uil_display_icon    = 0
+function! s:set(key, default)
+  if !has(g:, key)  
+    let g:[key] = default
+  endif
+endfunction
+
+call s:set('J6uil_display_offline', 0)
+call s:set('J6uil_display_online' , 0)
+call s:set('J6uil_echo_presence'  , 1)
+call s:set('J6uil_display_icon'   , 0)
 
 if !isdirectory(expand("~/.J6uil/icon"))
   call mkdir(expand("~/.J6uil/icon"), 'p')
