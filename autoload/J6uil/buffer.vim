@@ -142,10 +142,10 @@ function! s:update_message(message)
     let  b:J6uil_oldest_id = message.id
   end
 
-
   call append(line('$'), nickname . list[0])
+
   let row = line("$")
-  if nickname != '                '
+  if g:J6uil_display_icon && nickname != '                '
     let current_dir = getcwd()
     execute "cd " . expand('~/.J6uil/icon')
     let ico_path  =  expand('~/.J6uil/icon') . '/' . message.nickname . ".ico"
