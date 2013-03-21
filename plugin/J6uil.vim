@@ -5,7 +5,7 @@ let g:J6uil_display_offline = 0
 let g:J6uil_display_online  = 0
 let g:J6uil_echo_presence   = 1
 
-if !filereadable(expand("~/.J6uil/icon"))
+if !isdirectory(expand("~/.J6uil/icon"))
   call mkdir(expand("~/.J6uil/icon"), 'p')
 endif
 
