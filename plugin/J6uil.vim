@@ -2,8 +2,8 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 function! s:set(key, default)
-  if !has(g:, key)  
-    let g:[key] = default
+  if !has_key(g:, a:key)  
+    let g:[a:key] = a:default
   endif
 endfunction
 

@@ -86,13 +86,35 @@ function! J6uil#buffer#load_archives(room, messages)
 
     let nickname = message.nickname
     if nickname == s:before_msg_user || nickname == 'URL Info.'
-      let nickname = '               '
+      let nickname = '                '
     else
       let s:before_msg_user = nickname
-      let nickname = s:ljust(nickname, 12) . ' : '
+      let nickname = ' ' . s:ljust(nickname, 12) . ' : '
     endif
 
     call append(line('.'), nickname . list[0])
+
+    if g:J6uil_display_icon && nickname != '                '
+      let current_dir = getcwd()
+      execute "cd " . expand('~/.J6uil/icon')
+      let ico_path  =  expand('~/.J6uil/icon') . '/' . message.speaker_id . ".ico"
+      let img_url   = message.icon_url
+      let file_name = fnamemodify(img_url, ":t")
+
+      if !filereadable(ico_path)
+        echo "downloading ... " . img_url
+        call system("curl -L -O " . img_url)
+        call system("convert " . fnamemodify(img_url, ":t") . " " . ico_path)
+        call delete(file_name)
+        redraw
+      endif
+
+      execute "cd " . current_dir
+
+      execute ":sign define J6uil_icon_" . message.speaker_id. " icon=" . ico_path
+      execute ":sign place 1 line=" . (line(".") + 1) . " name=J6uil_icon_" . message.speaker_id . " buffer=" . bufnr("%")
+    endif
+
     execute "normal! \<Down>"
     for msg in list[1:]
       call append(line('.'), s:ljust('', 12) . '   ' . msg)
@@ -144,11 +166,10 @@ function! s:update_message(message)
 
   call append(line('$'), nickname . list[0])
 
-  let row = line("$")
   if g:J6uil_display_icon && nickname != '                '
     let current_dir = getcwd()
     execute "cd " . expand('~/.J6uil/icon')
-    let ico_path  =  expand('~/.J6uil/icon') . '/' . message.nickname . ".ico"
+    let ico_path  =  expand('~/.J6uil/icon') . '/' . message.speaker_id . ".ico"
     let img_url   = message.icon_url
     let file_name = fnamemodify(img_url, ":t")
 
@@ -162,8 +183,8 @@ function! s:update_message(message)
 
     execute "cd " . current_dir
 
-    execute ":sign define J6uil_icon_" . message.nickname . " icon=" . ico_path
-    execute ":sign place 1 line=" . row . " name=J6uil_icon_" . message.nickname . " buffer=" . bufnr("%")
+    execute ":sign define J6uil_icon_" . message.speaker_id . " icon=" . ico_path
+    execute ":sign place 1 line=" . line("$") . " name=J6uil_icon_" . message.speaker_id . " buffer=" . bufnr("%")
   endif
 
   for msg in list[1:]
