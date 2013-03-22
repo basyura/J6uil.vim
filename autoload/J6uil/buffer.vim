@@ -7,6 +7,7 @@ let s:DateTime = s:Vital.import('DateTime')
 let s:buf_name = 'J6uil'
 
 let s:archive_statement = '-- archive --'
+let s:blank_nickname    = '                '
 
 let s:last_bufnr = 0
 
@@ -35,7 +36,7 @@ function! J6uil#buffer#switch(room, messages)
   let b:J6uil_current_room = a:room
 
   for message in a:messages
-    call s:update_message(message)
+    call s:update_message(message, '$', 0)
   endfor
 
   call append(line('$'), '-- room : ' . a:room . ' --')
@@ -87,50 +88,17 @@ function! J6uil#buffer#append_message(message)
 endfunction
 
 function! J6uil#buffer#load_archives(room, messages)
+
+  let s:before_msg_user = ''
   " 暫定
+  delete _
+    "execute "normal! " . cnt . "\<Down>"
   for message in a:messages
-    let list = split(message.text, '\n')
-
-    let date_time = s:DateTime.from_format(message.timestamp . ' +0000', '%Y-%m-%dT%H:%M:%SZ %z', 'C')
-    let list[-1] = list[-1] . '  [[' . date_time.strftime("%m/%d %H:%M") . ']]'
-
-    let nickname = message.nickname
-    if nickname == s:before_msg_user || nickname == 'URL Info.'
-      let nickname = '                '
-    else
-      let s:before_msg_user = nickname
-      let nickname = ' ' . s:ljust(nickname, 12) . ' : '
-    endif
-
-    call append(line('.'), nickname . list[0])
-
-    if g:J6uil_display_icon && nickname != '                '
-      let current_dir = getcwd()
-      execute "cd " . expand('~/.J6uil/icon')
-      let ico_path  =  expand('~/.J6uil/icon') . '/' . message.speaker_id . ".ico"
-      let img_url   = message.icon_url
-      let file_name = fnamemodify(img_url, ":t")
-
-      if !filereadable(ico_path)
-        echo "downloading ... " . img_url
-        call system("curl -L -O " . img_url)
-        call system("convert " . fnamemodify(img_url, ":t") . " " . ico_path)
-        call delete(file_name)
-        redraw
-      endif
-
-      execute "cd " . current_dir
-
-      execute ":sign define J6uil_icon_" . message.speaker_id. " icon=" . ico_path
-      execute ":sign place 1 line=" . (line(".") + 1) . " name=J6uil_icon_" . message.speaker_id . " buffer=" . bufnr("%")
-    endif
-
-    execute "normal! \<Down>"
-    for msg in list[1:]
-      call append(line('.'), s:ljust('', 12) . '   ' . msg)
-      execute "normal! \<Down>"
-    endfor
+    let cnt = s:update_message(message, '.', -1)
+    "execute "normal! " . cnt . "\<Down>"
   endfor
+
+  call append(0, s:archive_statement)
 
   let  b:J6uil_oldest_id = a:messages[0].id
 endfunction
@@ -142,7 +110,7 @@ function! s:update(events)
       if event.message.room != s:current_room
         continue
       endif
-      call s:update_message(event.message)
+      call s:update_message(event.message, '$', 0)
       let counter += 1
     elseif has_key(event, 'presence')
       if event.presence.room != s:current_room
@@ -154,7 +122,7 @@ function! s:update(events)
   return counter
 endfunction
 
-function! s:update_message(message)
+function! s:update_message(message, line_expr, cnt)
   let message = a:message
   let list = split(message.text, '\n')
 
@@ -163,10 +131,10 @@ function! s:update_message(message)
 
   let nickname = message.nickname
   if nickname == s:before_msg_user || nickname == 'URL Info.'
-    let nickname = '                '
+    let nickname = s:blank_nickname
   else
     let s:before_msg_user = nickname
-    let nickname = ' ' . s:ljust(nickname, 12) . ' : '
+    let nickname = (g:J6uil_display_icon ?  ' ' : '') . s:ljust(nickname, 12) . (g:J6uil_display_icon ?  '' : ' ') . ' : '
   endif
 
   if getline(1) == ''
@@ -174,9 +142,9 @@ function! s:update_message(message)
     let  b:J6uil_oldest_id = message.id
   end
 
-  call append(line('$'), nickname . list[0])
+  call append(line(a:line_expr) + a:cnt, nickname . list[0])
 
-  if g:J6uil_display_icon && nickname != '                '
+  if g:J6uil_display_icon && substitute(nickname, ' ', '', 'g') != ''
     let current_dir = getcwd()
     execute "cd " . expand('~/.J6uil/icon')
     let ico_path  =  expand('~/.J6uil/icon') . '/' . message.speaker_id . ".ico"
@@ -194,12 +162,14 @@ function! s:update_message(message)
     execute "cd " . current_dir
 
     execute ":sign define J6uil_icon_" . message.speaker_id . " icon=" . ico_path
-    execute ":sign place 1 line=" . line("$") . " name=J6uil_icon_" . message.speaker_id . " buffer=" . bufnr("%")
+    execute ":sign place 1 line=" . (line(a:line_expr) + a:cnt) . " name=J6uil_icon_" . message.speaker_id . " buffer=" . bufnr("%")
   endif
 
   for msg in list[1:]
-    call append(line('$'), s:ljust('', 12) . '   ' . msg)
+    call append(line(a:line_expr), s:ljust('', 12) . '    ' . msg)
   endfor
+
+  return len(list) 
 endfunction
 
 function! s:update_presence(presence)
