@@ -61,7 +61,7 @@ function! J6uil#buffer#update(json)
   let is_bottom = line(".") == line("$")
 
   for json in s:que
-    let count = s:update(json.events)
+    let cnt = s:update(json.events)
     if count
       continue
     endif
@@ -69,9 +69,9 @@ function! J6uil#buffer#update(json)
     if is_bottom
       execute "normal! G"
     else
-      " scrolloff and user's cursor move ...
+      " scrolloff and user's cursor move ... 
       "execute "normal! " . count . "\<Up>"
-      execute "normal! " . count . "\<C-e>"
+      execute "normal! " . cnt . "\<C-e>"
     endif
   endfor
 
@@ -143,13 +143,13 @@ function! s:update(events)
         continue
       endif
       call s:update_message(event.message)
+      let counter += 1
     elseif has_key(event, 'presence')
       if event.presence.room != s:current_room
         continue
       endif
       call s:update_presence(event.presence)
     endif
-    let counter += 1
   endfor
   return counter
 endfunction
