@@ -59,10 +59,20 @@ function! J6uil#buffer#update(json)
   call s:buf_setting()
 
   let is_bottom = line(".") == line("$")
+
   for json in s:que
-    if s:update(json.events) > 0 && is_bottom
+    let count = s:update(json.events)
+    if count
+      continue
+    endif
+    " move cursor
+    if is_bottom
       execute "normal! G"
-    endi
+    else
+      " scrolloff and user's cursor move ...
+      "execute "normal! " . count . "\<Up>"
+      execute "normal! " . count . "\<C-e>"
+    endif
   endfor
 
   let s:que = []
