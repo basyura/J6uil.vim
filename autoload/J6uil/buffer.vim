@@ -67,8 +67,9 @@ function! J6uil#buffer#update(json)
     let cnt += s:update(json.events)
   endfor
 
-  if is_bottom
+  if is_bottom && cnt
     execute "normal! G"
+    execute "normal! \<C-e>"
   elseif cnt
     execute "normal! " . cnt . "\<C-e>"
   endif
