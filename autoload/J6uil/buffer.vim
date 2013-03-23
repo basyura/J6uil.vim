@@ -29,6 +29,7 @@ function! J6uil#buffer#switch(room, messages)
   call s:switch_buffer()
   call s:buf_setting()
 
+  execute "sign unplace * buffer=" . bufnr("%")
 "  if !exists('b:J6uil_current_room') || b:J6uil_current_room != a:room
     silent %delete _
 "  endif
@@ -61,20 +62,18 @@ function! J6uil#buffer#update(json)
 
   let is_bottom = line(".") == line("$")
 
+  let cnt = 0
   for json in s:que
-    let cnt = s:update(json.events)
-    if count
-      continue
-    endif
-    " move cursor
-    if is_bottom
-      execute "normal! G"
-    else
-      " scrolloff and user's cursor move ... 
-      "execute "normal! " . count . "\<Up>"
-      execute "normal! " . cnt . "\<C-e>"
-    endif
+    let cnt += s:update(json.events)
   endfor
+
+  if is_bottom
+    execute "normal! G"
+  else
+    execute "normal! " . cnt . "\<C-e>"
+  endif
+
+  execute "normal! \<C-e>"
 
   let s:que = []
 
