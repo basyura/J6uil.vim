@@ -69,11 +69,9 @@ function! J6uil#buffer#update(json)
 
   if is_bottom
     execute "normal! G"
-  else
+  elseif cnt
     execute "normal! " . cnt . "\<C-e>"
   endif
-
-  execute "normal! \<C-e>"
 
   let s:que = []
 
