@@ -105,7 +105,7 @@ function! s:check_connection()
   try
     call s:lingr.verify_and_relogin()
     call s:observe_start(s:lingr)
-    echohl Error | echomsg "check connection is over limit. so connected"  | echohl None
+    echohl Error | echomsg "check connection :  over time. trying to reconnect ..."  | echohl None
   catch
     redraw
     echohl Error | echomsg "retried ... "  | echohl None
