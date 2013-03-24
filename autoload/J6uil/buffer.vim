@@ -219,26 +219,6 @@ function! s:switch_buffer()
   endif
 endfunction
 
-function! s:open_say_buffer()
-  let text  = a:0 > 0 ? a:1 : ''
-  let param = a:0 > 1 ? a:2 : {}
-  
-  let bufnr = bufwinnr('j6uil_say')
-  if bufnr > 0
-    exec bufnr.'wincmd w'
-  else
-    execute 'below split j6uil_say'
-    execute '2 wincmd _'
-    call s:define_default_settings_say()
-  endif
-
-  let &filetype = 'j6uil_say'
-
-  startinsert!
-
-  setlocal nomodified
-endfunction
-
 function! s:buf_setting()
   setlocal noswapfile
   setlocal modifiable
@@ -252,19 +232,11 @@ endfunction
 
 function! s:define_default_key_mappings()
   augroup J6uil_buffer
-    nnoremap <silent> <buffer> s :call <SID>open_say_buffer()<CR>
+    nnoremap <silent> <buffer> s :call J6uil#say#open(J6uil#buffer#current_room())<CR>
     nnoremap <silent> <buffer> <CR>    :call <SID>enter_action()<CR>
   augroup END
 endfunction
 
-function! s:define_default_settings_say()
-  augroup J6uil_say
-    nnoremap <silent> <buffer> <Enter> :call <SID>post_message()<CR>
-    inoremap <silent> <buffer> <C-CR>  <ESC>:call <SID>post_message()<CR>
-    nnoremap <silent> <buffer> <C-j> :bd!<CR>
-    setlocal nonu
-  augroup END
-endfunction
 
 function! s:enter_action()
   if getline(".") == s:archive_statement
@@ -278,18 +250,6 @@ function! s:enter_action()
     execute "OpenBrowser " . matched[0]
     return
   endif
-endfunction
-
-
-function! s:post_message()
-  let text = s:get_text()
-  if J6uil#say(s:current_room, text)
-    bd!
-  endif
-endfunction
-
-function! s:get_text()
-  return matchstr(join(getline(1, '$'), "\n"), '^\_s*\zs\_.\{-}\ze\_s*$')
 endfunction
 
 function! s:ljust(str, size, ...)
