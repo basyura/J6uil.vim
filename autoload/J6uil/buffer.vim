@@ -45,6 +45,7 @@ function! J6uil#buffer#switch(room, messages)
 
   execute "normal! G"
   setlocal nomodified
+  setlocal nomodifiable
 endfunction
 
 let s:que = []
@@ -77,6 +78,7 @@ function! J6uil#buffer#update(json)
   let s:que = []
 
   setlocal nomodified
+  setlocal nomodifiable
 endfunction
 
 function! J6uil#buffer#append_message(message)
