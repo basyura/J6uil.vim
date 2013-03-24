@@ -11,6 +11,14 @@ function! J6uil#thread#is_exists()
     return !empty(g:J6uil_thread_list)
 endfunction
 
+function! J6uil#thread#count()
+    return len(g:J6uil_thread_list)
+endfunction
+
+function! J6uil#thread#has_many()
+    return !empty(g:J6uil_thread_list) && len(g:J6uil_thread_list) > 1
+endfunction
+
 function! s:release(threads)
     for thread in a:threads
         echomsg 'J6uil killed ' . thread.vimproc.pid

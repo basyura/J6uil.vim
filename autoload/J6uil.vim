@@ -78,6 +78,11 @@ function! J6uil#__update(res)
     return
   endtry
   
+  if J6uil#thread#has_many()
+    echohl Error | echomsg  "thread count is " .  string(J6uil#thread#count()) | echohl None
+    return
+  endif
+
   if has_key(json, 'events')
     call J6uil#buffer#update(json)
   endif
