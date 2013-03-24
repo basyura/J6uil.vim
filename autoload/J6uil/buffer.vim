@@ -89,6 +89,8 @@ endfunction
 
 function! J6uil#buffer#load_archives(room, messages)
 
+  setlocal modifiable
+
   let s:before_msg_user = ''
   " 暫定
   delete _
@@ -101,6 +103,7 @@ function! J6uil#buffer#load_archives(room, messages)
   call append(0, s:archive_statement)
 
   let  b:J6uil_oldest_id = a:messages[0].id
+  setlocal nomodifiable
 endfunction
 
 function! s:update(events)
