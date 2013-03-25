@@ -12,6 +12,7 @@ call s:set('J6uil_display_online'  , 0)
 call s:set('J6uil_echo_presence'   , 1)
 call s:set('J6uil_display_icon'    , 0)
 call s:set('J6uil_display_interval', 0)
+call s:set('J6uil_updatetime'      , 1000)
 
 if !isdirectory(expand("~/.J6uil/icon"))
   call mkdir(expand("~/.J6uil/icon"), 'p')

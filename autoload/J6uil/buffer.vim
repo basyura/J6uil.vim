@@ -15,11 +15,6 @@ let s:current_room = ''
 
 let s:before_msg_user = ''
 
-augroup J6uil-buffer
-  autocmd!
-  autocmd! CursorHold * silent! call feedkeys("g\<Esc>", "n")
-augroup END
-
 function! J6uil#buffer#current_room()
   return s:current_room
 endfunction
@@ -237,6 +232,15 @@ function! s:buf_setting()
   hi Signcolumn guibg=bg
   call s:define_default_key_mappings()
   setfiletype J6uil
+
+  let b:saved_updatetime = &updatetime
+  let &updatetime = g:J6uil_updatetime
+  augroup J6uil-buffer
+    autocmd!
+    autocmd! CursorHold <buffer> silent! call feedkeys("g\<Esc>", "n")
+    autocmd! BufEnter   <buffer> execute "let &updatetime=" . g:J6uil_updatetime
+    autocmd! BufLeave   <buffer> execute "let &updatetime=" . b:saved_updatetime
+  augroup END
 endfunction
 
 function! s:define_default_key_mappings()
