@@ -37,6 +37,7 @@ function! J6uil#reconnect()
   endif
   " todo
   call J6uil#buffer#switch(room, [])
+  set modifiable
   silent %delete _
   call J6uil#subscribe(room)
 endfunction
