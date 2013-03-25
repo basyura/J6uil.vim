@@ -100,10 +100,12 @@ function! J6uil#say(room, message)
 endfunction
 
 function! s:check_connection()
+  " debug
   if g:J6uil_display_interval
-    echo  localtime() - s:connect_time
+    echo ' connection ' . (J6uil#thread#is_exists() ? 'ok' : 'ng') . ' : ' .  string(localtime() - s:connect_time)
   endif
-  if (localtime() - s:connect_time) <= 150
+  " check connection
+  if J6uil#thread#is_exists() && (localtime() - s:connect_time) <= 150
     return
   endif
 
