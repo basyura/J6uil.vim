@@ -68,6 +68,8 @@ function! J6uil#buffer#update(json)
     execute "normal! \<C-e>"
   elseif cnt
     execute "normal! " . cnt . "\<C-e>"
+  else
+    call feedkeys("g\<Esc>", "n")
   endif
 
   let s:que = []
