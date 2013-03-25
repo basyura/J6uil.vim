@@ -25,12 +25,23 @@ Settings
     let g:lingr_vim_user     = 'your user name'
     let g:lingr_vim_password = 'you password'
 
+    let g:6uil_display_offline   = 0
+    let g:J6uil_display_online   = 0
+    let g:J6uil_echo_presence    = 1
+    let g:J6uil_display_icon     = 0
+    let g:J6uil_display_interval = 0
+    let g:J6uil_updatetime       = 1000
+
 Usage
 -----
 
 subscribe
 
     :J6uil room
+
+reconnect
+
+    :J6uilReconnect
 
 say
 
