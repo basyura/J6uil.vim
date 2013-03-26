@@ -235,7 +235,9 @@ function! s:buf_setting()
   call s:define_default_key_mappings()
   setfiletype J6uil
 
-  let b:saved_updatetime = &updatetime
+  if !exists('b:saved_updatetime')
+    let b:saved_updatetime = &updatetime
+  endif
   let &updatetime = g:J6uil_updatetime
   augroup J6uil-buffer
     autocmd!
