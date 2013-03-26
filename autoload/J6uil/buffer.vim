@@ -239,7 +239,7 @@ function! s:buf_setting()
   let &updatetime = g:J6uil_updatetime
   augroup J6uil-buffer
     autocmd!
-    autocmd! CursorHold <buffer> silent! call feedkeys("g\<Esc>", "n")
+    "autocmd! CursorHold <buffer> silent! call feedkeys("g\<Esc>", "n")
     autocmd! BufEnter   <buffer> execute "let &updatetime=" . g:J6uil_updatetime
     autocmd! BufLeave   <buffer> execute "let &updatetime=" . b:saved_updatetime
   augroup END
