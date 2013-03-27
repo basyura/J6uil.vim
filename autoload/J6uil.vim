@@ -6,6 +6,11 @@ let s:connect_time = localtime()
 
 function! J6uil#subscribe(room)
 
+  augroup J6uil
+    autocmd!
+    autocmd! CursorHold * call s:check_connection()
+  augroup END
+
   if !exists('s:lingr')
     try
       let user = exists('g:J6uil_user')     ? g:J6uil_user     : g:lingr_vim_user
@@ -40,6 +45,13 @@ function! J6uil#reconnect()
   set modifiable
   silent %delete _
   call J6uil#subscribe(room)
+endfunction
+
+function! J6uil#disconnect()
+  augroup J6uil
+    autocmd!
+  augroup END
+  call J6uil#buffer#append_message('-- disconnected --')
 endfunction
 
 function! J6uil#load_archives(room, oldest_id)
@@ -126,10 +138,5 @@ function! s:check_connection()
     "call J6uil#subscribe(a:J6uil_current_room)
   endtry
 endfunction
-
-augroup J6uil
-    autocmd!
-    autocmd! CursorHold * call s:check_connection()
-augroup END
 
 let &cpo = s:save_cpo
