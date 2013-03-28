@@ -124,12 +124,13 @@ function! s:check_connection()
   endif
 
   try
-    call s:lingr.verify_and_relogin()
-    call s:observe_start(s:lingr)
-    echohl Error | echomsg "check connection :  over time. trying to reconnect ..."  | echohl None
+    "call s:lingr.verify_and_relogin()
+    "call s:observe_start(s:lingr)
+    echohl Error | echo "check connection :  over time. trying to reconnect ..."  | echohl None
+    call J6uil#reconnect()
   catch
     redraw
-    echohl Error | echomsg "retried ... "  | echohl None
+    echohl Error | echo "retried ... "  | echohl None
     call J6uil#buffer#append_message('reconnecting ...')
     sleep 2
     call s:check_connection()
