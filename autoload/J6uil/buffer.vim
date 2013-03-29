@@ -244,6 +244,7 @@ function! s:buf_setting()
     "autocmd! CursorHold <buffer> silent! call feedkeys("g\<Esc>", "n")
     autocmd! BufEnter   <buffer> execute "let &updatetime=" . g:J6uil_updatetime
     autocmd! BufLeave   <buffer> execute "let &updatetime=" . b:saved_updatetime
+    autocmd! BufUnload  <buffer> :J6uilDisconnect
   augroup END
 endfunction
 

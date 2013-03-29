@@ -51,7 +51,10 @@ function! J6uil#disconnect()
   augroup J6uil
     autocmd!
   augroup END
-  call J6uil#buffer#append_message('-- disconnected --')
+  if exists('b:saved_updatetime')
+    let &updatetime = b:saved_updatetime
+  endif
+  echohl Error | echo '-- disconnected --' | echohl None
 endfunction
 
 function! J6uil#load_archives(room, oldest_id)
