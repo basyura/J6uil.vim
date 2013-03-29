@@ -13,8 +13,8 @@ function! J6uil#subscribe(room)
 
   if !exists('s:lingr')
     try
-      let user = exists('g:J6uil_user')     ? g:J6uil_user     : g:lingr_vim_user
-      let pass = exists('g:J6uil_password') ? g:J6uil_password : g:lingr_vim_password
+      let user = exists('g:J6uil_user')     ? g:J6uil_user     : exists('g:lingr_vim_user')     ? g:lingr_vim_user     : input('user : ')
+      let pass = exists('g:J6uil_password') ? g:J6uil_password : exists('g:lingr_vim_password') ? g:lingr_vim_password : input('password : ')
     catch
       echohl Error
       echo 'you must define g:J6uil_user or g:lingr_vim_user'
