@@ -62,6 +62,10 @@ function! J6uil#load_archives(room, oldest_id)
   call J6uil#buffer#load_archives(a:room, messages)
 endfunction
 
+function! J6uil#get_rooms()
+  return s:lingr.get_rooms()
+endfunction
+
 function! s:observe_start(lingr)
   " めちゃくちゃになってきたな・・・
   let lingr = a:lingr

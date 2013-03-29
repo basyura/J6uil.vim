@@ -251,7 +251,8 @@ endfunction
 function! s:define_default_key_mappings()
   augroup J6uil_buffer
     nnoremap <silent> <buffer> s :call J6uil#say#open(J6uil#buffer#current_room())<CR>
-    nnoremap <silent> <buffer> <CR>    :call <SID>enter_action()<CR>
+    nnoremap <silent> <buffer> <CR>      :call <SID>enter_action()<CR>
+    nnoremap <silent> <buffer> <Leader>r :Unite J6uil/room<CR>
   augroup END
 endfunction
 
