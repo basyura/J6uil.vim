@@ -255,6 +255,8 @@ function! s:define_default_key_mappings()
     nnoremap <silent> <buffer> <CR>      :call <SID>enter_action()<CR>
     nnoremap <silent> <buffer> <Leader>r :Unite J6uil/rooms   -buffer-name=J6uil_rooms<CR>
     nnoremap <silent> <buffer> <Leader>u :Unite J6uil/members -buffer-name=J6uil_members<CR>
+    nnoremap <silent> <buffer> <Leader><Leader>r :J6uilReconnect<CR>
+    nnoremap <silent> <buffer> <Leader><Leader>d :J6uilDisconnect<CR>
   augroup END
 endfunction
 

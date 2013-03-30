@@ -49,6 +49,7 @@ function! J6uil#reconnect()
   set modifiable
   silent %delete _
   call J6uil#subscribe(room)
+  echohl Error | echo "reconnected to " . room  | echohl None
 endfunction
 
 function! J6uil#disconnect()
