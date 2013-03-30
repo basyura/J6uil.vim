@@ -1,3 +1,5 @@
+let s:save_cpo = &cpo
+set cpo&vim
 
 function! unite#sources#J6uil_rooms#define()
   return s:source
@@ -21,3 +23,5 @@ function! s:source.action_table.execute.func(candidate)
   let room = a:candidate.word
   call J6uil#subscribe(room)
 endfunction
+
+let &cpo = s:save_cpo
