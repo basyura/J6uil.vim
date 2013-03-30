@@ -1,10 +1,10 @@
 
-function! unite#sources#J6uil_room#define()
+function! unite#sources#J6uil_rooms#define()
   return s:source
 endfunction
 
 let s:source = {
-      \ 'name': 'J6uil/room',
+      \ 'name': 'J6uil/rooms',
       \ 'action_table'   : {},
       \ 'default_action' : {'common' : 'execute'},
       \ 'is_listed'      : 0,
@@ -19,6 +19,5 @@ endfunction
 let s:source.action_table.execute = {'description' : 'change room'}
 function! s:source.action_table.execute.func(candidate)
   let room = a:candidate.word
-  echo room
   call J6uil#subscribe(room)
 endfunction

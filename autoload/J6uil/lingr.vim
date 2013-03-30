@@ -56,11 +56,11 @@ function! s:lingr.get_rooms()
   return s:get('user/get_rooms', {'session' : self.session}).rooms
 endfunction
 
-function! s:lingr.room_show(rooms)
+function! s:lingr.room_show(room)
   return s:get('room/show', {
         \ 'session' : self.session,
-        \ 'rooms'   : [a:rooms],
-        \ }).rooms[0].messages
+        \ 'rooms'   : [a:room],
+        \ }).rooms[0]
 endfunction
 
 function! s:lingr.say(room, msg)

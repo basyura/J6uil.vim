@@ -27,12 +27,13 @@ function! J6uil#subscribe(room)
     call s:lingr.verify_and_relogin()
   endif
 
-  let messages = s:lingr.room_show(a:room)
-  call J6uil#buffer#switch(a:room, messages)
+  let status  = s:lingr.room_show(a:room)
+  call J6uil#buffer#switch(a:room, status)
 
   call s:observe_start(s:lingr)
 
 endfunction
+
 
 function! J6uil#reconnect()
   let room = J6uil#buffer#current_room()
@@ -41,7 +42,10 @@ function! J6uil#reconnect()
     return
   endif
   " todo
-  call J6uil#buffer#switch(room, [])
+  call J6uil#buffer#switch(room, {
+        \ 'messages' : [], 
+        \ 'roster'   : {'members' : [], 'bots' : []}
+        \ })
   set modifiable
   silent %delete _
   call J6uil#subscribe(room)

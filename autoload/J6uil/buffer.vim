@@ -19,7 +19,7 @@ function! J6uil#buffer#current_room()
   return s:current_room
 endfunction
 
-function! J6uil#buffer#switch(room, messages)
+function! J6uil#buffer#switch(room, status)
   let s:current_room = a:room
   call s:switch_buffer()
   call s:buf_setting()
@@ -30,8 +30,9 @@ function! J6uil#buffer#switch(room, messages)
 "  endif
 
   let b:J6uil_current_room = a:room
+  let b:J6uil_roster = a:status.roster
 
-  for message in a:messages
+  for message in a:status.messages
     call s:update_message(message, '$', 0)
   endfor
 
@@ -252,7 +253,8 @@ function! s:define_default_key_mappings()
   augroup J6uil_buffer
     nnoremap <silent> <buffer> s :call J6uil#say#open(J6uil#buffer#current_room())<CR>
     nnoremap <silent> <buffer> <CR>      :call <SID>enter_action()<CR>
-    nnoremap <silent> <buffer> <Leader>r :Unite J6uil/room<CR>
+    nnoremap <silent> <buffer> <Leader>r :Unite J6uil/rooms   -buffer-name=J6uil_rooms<CR>
+    nnoremap <silent> <buffer> <Leader>u :Unite J6uil/members -buffer-name=J6uil_members<CR>
   augroup END
 endfunction
 
