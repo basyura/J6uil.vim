@@ -12,7 +12,7 @@ let s:source = {
 
 function! s:source.gather_candidates(args, context)
   " members : ['timestamp', 'pokeable', 'name', 'is_online', 'username', 'is_owner', 'icon_url'] 
-  return map(b:J6uil_roster.members, '{
+  return map(copy(b:J6uil_roster.members), '{
              \ "word" : v:val.name,
              \ "abbr" : (v:val.is_online ? "+ " : "  ") .  v:val.name,
              \ }')
