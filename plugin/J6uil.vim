@@ -18,14 +18,15 @@ if !isdirectory(expand("~/.J6uil/icon"))
   call mkdir(expand("~/.J6uil/icon"), 'p')
 endif
 
-command! -nargs=1 J6uil :call s:start(<f-args>)
+command! -nargs=? J6uil :call s:start(<f-args>)
 
 command! -nargs=0 J6uilReconnect :call J6uil#reconnect()
 
 command! -nargs=0 J6uilDisconnect :call J6uil#disconnect()
 
-function! s:start(room)
-  call J6uil#subscribe(a:room)
+function! s:start(...)
+  let room = a:0 ? a:1 : ''
+  call J6uil#subscribe(room)
 endfunction
 
 let &cpo = s:save_cpo

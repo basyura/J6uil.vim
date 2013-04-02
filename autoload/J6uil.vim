@@ -27,11 +27,17 @@ function! J6uil#subscribe(room)
     call s:lingr.verify_and_relogin()
   endif
 
-  let status  = s:lingr.room_show(a:room)
-  call J6uil#buffer#switch(a:room, status)
+  let room = a:room
+  if room == ''
+    let rooms = J6uil#get_rooms()
+    let room = rooms[0]
+  end
+
+
+  let status = s:lingr.room_show(room)
+  call J6uil#buffer#switch(room, status)
 
   call s:observe_start(s:lingr)
-
 endfunction
 
 
