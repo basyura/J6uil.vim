@@ -166,7 +166,7 @@ function! s:update_message(message, line_expr, cnt)
       execute ":sign define J6uil_icon_" . message.speaker_id . " icon=" . ico_path
       execute ":sign place 1 line=" . (line(a:line_expr) + a:cnt) . " name=J6uil_icon_" . message.speaker_id . " buffer=" . bufnr("%")
     catch
-      echohl Error | echomsg message.nickname . ' ' . img_url . ' ' .  v:exception | echohl None
+      echohl Error | echomsg message.nickname . ' ' .  v:exception | echohl None
     endtry
   endif
 
