@@ -268,7 +268,7 @@ function! s:enter_action()
   endif
 
   let word = expand('<cWORD>')
-  let matched = matchlist(word, 'https\?://[0-9A-Za-z_#?~=\-+%\.\/:]\+')
+  let matched = matchlist(word, 'https\?://[0-9A-Za-z_#?~=\-+%\.\/:!]\+')
   if len(matched) != 0
     execute "OpenBrowser " . matched[0]
     return
