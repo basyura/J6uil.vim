@@ -153,7 +153,7 @@ function! s:update_message(message, line_expr, cnt)
     let file_name = fnamemodify(img_url, ":t")
 
     if !filereadable(ico_path)
-      echo "downloading " . message.nickname . "'s avatar ... " . img_url
+      "echo "downloading " . message.nickname . "'s avatar ... " . img_url
       call system("curl -L -O " . img_url)
       call system("convert " . fnamemodify(img_url, ":t") . " " . ico_path)
       call delete(file_name)
