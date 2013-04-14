@@ -46,11 +46,15 @@ endfunction
 
 let s:que = []
 
+function! J6uil#buffer#is_current()
+  return bufname("%") == s:buf_name
+endfunction
+
 function! J6uil#buffer#update(json)
 
   call add(s:que, a:json) 
 
-  if bufname("%") != s:buf_name
+  if !J6uil#buffer#is_current()
     return
   endif
 

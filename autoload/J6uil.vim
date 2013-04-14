@@ -135,6 +135,10 @@ function! s:check_connection()
   " debug
   if g:J6uil_display_interval
     echo ' connection ' . (J6uil#thread#is_exists() ? 'ok' : 'ng') . ' : ' .  string(localtime() - s:connect_time)
+    " for : j6uil → unite → j6uil
+    if J6uil#buffer#is_current()
+      let &updatetime = g:J6uil_updatetime
+    endif
   endif
   " check connection
   if J6uil#thread#is_exists() && (localtime() - s:connect_time) <= 150
