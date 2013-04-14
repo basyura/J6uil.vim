@@ -236,15 +236,15 @@ function! s:buf_setting()
   call s:define_default_key_mappings()
   setfiletype J6uil
 
-  if !exists('b:saved_updatetime')
-    let b:saved_updatetime = &updatetime
+  if !exists('b:J6uil_saved_updatetime')
+    let b:J6uil_saved_updatetime = &updatetime
   endif
   let &updatetime = g:J6uil_updatetime
   augroup J6uil-buffer
     autocmd!
     "autocmd! CursorHold <buffer> silent! call feedkeys("g\<Esc>", "n")
-    autocmd! BufEnter   <buffer> execute "let &updatetime=" . g:J6uil_updatetime
-    autocmd! BufLeave   <buffer> execute "let &updatetime=" . b:saved_updatetime
+    autocmd! WinEnter   <buffer> execute "let &updatetime=" . g:J6uil_updatetime
+    autocmd! BufLeave   <buffer> execute "let &updatetime=" . b:J6uil_saved_updatetime
     autocmd! BufUnload  <buffer> :J6uilDisconnect
   augroup END
 endfunction
