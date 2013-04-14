@@ -50,6 +50,10 @@ function! J6uil#buffer#is_current()
   return bufname("%") == s:buf_name
 endfunction
 
+function! J6uil#buffer#has_que()
+  return len(s:que) > 0
+endfunction
+
 function! J6uil#buffer#update(json)
 
   call add(s:que, a:json) 

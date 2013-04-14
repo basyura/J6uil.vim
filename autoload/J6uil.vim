@@ -117,6 +117,7 @@ function! J6uil#__update(res)
   if has_key(json, 'events')
     call J6uil#buffer#update(json)
   endif
+
   " if over 2 minutes return status ok only ?
   if has_key(json , 'counter')
     let s:counter = json.counter
@@ -135,19 +136,24 @@ function! s:check_connection()
   " debug
   if g:J6uil_display_interval
     echo ' connection ' . (J6uil#thread#is_exists() ? 'ok' : 'ng') . ' : ' .  string(localtime() - s:connect_time)
-    " for : j6uil → unite → j6uil
-    if J6uil#buffer#is_current()
-      let &updatetime = g:J6uil_updatetime
-    endif
   endif
+
+  " for : j6uil → unite → j6uil
+  if J6uil#buffer#is_current()
+    let &updatetime = g:J6uil_updatetime
+  endif
+
+  " for reenter to J6uil's buffer
+  if J6uil#buffer#has_que()
+    call J6uil#buffer#update({'events' : []})
+  endif
+
   " check connection
   if J6uil#thread#is_exists() && (localtime() - s:connect_time) <= 150
     return
   endif
 
   try
-    "call s:lingr.verify_and_relogin()
-    "call s:observe_start(s:lingr)
     echohl Error | echo "check connection :  over time. trying to reconnect ..."  | echohl None
     call J6uil#reconnect()
   catch
@@ -156,9 +162,6 @@ function! s:check_connection()
     call J6uil#buffer#append_message('reconnecting ...')
     sleep 2
     call s:check_connection()
-    " to delete refresh buffer
-    "let s:current_room = ''
-    "call J6uil#subscribe(a:J6uil_current_room)
   endtry
 endfunction
 
