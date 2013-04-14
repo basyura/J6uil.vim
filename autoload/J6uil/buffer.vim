@@ -203,7 +203,7 @@ function! s:switch_buffer()
   endwhile
   " buf is not exist
   if bufnr < 0
-    execute 'split ' . s:buf_name
+    execute g:J6uil_open_buffer_cmd . ' ' . s:buf_name
     let s:last_bufnr = bufnr("")
     return
   endif
@@ -215,7 +215,7 @@ function! s:switch_buffer()
   endif
   " buf is exist
   if buflisted(bufnr)
-    if g:tweetvim_open_buffer_cmd =~ "split"
+    if g:J6uil_open_buffer_cmd =~ "split"
       execute "split"
     endif
     execute 'buffer ' . bufnr
