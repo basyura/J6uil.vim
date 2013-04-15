@@ -13,6 +13,7 @@ INTERFACE			|J6uil-interface|
   COMMANDS			  |J6uil-commands|
   KEY MAPPINGS			  |J6uil-key-mappings|
 VARIABLES			|J6uil-variables|
+BUFFERERS			|J6uil-bufferes|
 
 ==============================================================================
 INTRODUCTION					*J6uil-introduction*
@@ -29,7 +30,7 @@ Requirement:
 	http://curl.haxx.se/
 
 	vimproc
-        https://github.com/Shougo/vimproc
+	https://github.com/Shougo/vimproc
 
 	open-browser.vim
 	https://github.com/tyru/open-browser.vim)
@@ -57,7 +58,8 @@ If you don't define these user/password variables, please input by prompt.
 <
 Then, current room's messages are displayed
 
-If you want to say in current room, open say-buffer by s in normal mode and write your message.
+If you want to say in current room, open say-buffer by s in normal mode
+and write your message.
 You can post messages by <CR> in normal mode or <C-CR> in insert mode.
 
 enjoy!
@@ -69,13 +71,13 @@ INTERFACE					*J6uil-interface*
 COMMANDS					*J6uil-commands*
 
 :J6uil {room}                                   *:J6uil*
-                start lingr.
+		start lingr.
 
 :J6uilReconnect                                 *:J6uilReconnect*
-                reconnect to lingr.
+		reconnect to lingr.
 
 :J6uilDisconnect                                *:J6uilDisconnect*
-                disconnect from lingr.
+		disconnect from lingr.
 
 
 ------------------------------------------------------------------------------
@@ -118,28 +120,50 @@ g:J6uil_insert_online		         	*g:J6uil_insert_online*
 		default : 0
 
 g:J6uil_echo_presence                           *g:J6uil_echo_presence*
-                you can see presence (online/offline) by echo.
+		you can see presence (online/offline) by echo.
 		default : 1
 
 g:J6uil_echo_interval                           *g:J6uil_echo_interval*
-                echo interval from last lingr api's response.
+		echo interval from last lingr api's response.
 		default : 0
 
 g:J6uil_updatetime                              *g:J6uil_updatetime*
-                interval time to update buffer.
-                this value changed &updatetime temporally.
+		interval time to update buffer.
+		this value changed &updatetime temporally.
 		default : 1000
 
 g:J6uil_open_buffer_cmd                         *g:J6uil_open_buffer_cmd*
-                commadn to open J6uil buffer.
+		commadn to open J6uil buffer.
 		default : edit!
 
-g:J6uil_display_icon                           *g:J6uil_display_icon*
-                display icon by :sign.
-                to use this, you have to install ImageMagick.
-                downloaded icons are saved in g:J6uil_config_dir/icon
-                directory.
+g:J6uil_display_icon                            *g:J6uil_display_icon*
+		display icon by :sign.
+		to use this, you have to install ImageMagick.
+		downloaded icons are saved in g:J6uil_config_dir/icon
+		directory.
 		default : 0
 
+==============================================================================
+BUFFERES 					*J6uil-bufferes*
+
+J6uil
+		lingr message's buffer.
+
+J6uil_say
+		message buffer to post.
+
+
+if you want to change keymap, write autocmd to .vimrc like this.
+>
+		augroup my-J6uil
+		  autocmd!
+		  autocmd FileType J6uil :call s:J6uil_settings()
+		augroup END
+
+		function! s:J6uil_settings()
+		  nunmap <buffer> s
+		  nmap <silent> <buffer> r  <Plug>(J6uil_open_say_buffer)
+		endfunction
+<
 ==============================================================================
 vim:tw=78:fo=tcq2mM:ts=8:ft=help:norl

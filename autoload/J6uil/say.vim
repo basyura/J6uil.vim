@@ -13,7 +13,7 @@ function! J6uil#say#open(room)
     call s:define_default_settings_say()
   endif
 
-  let &filetype = 'j6uil_say'
+  let &filetype = 'J6uil_say'
 
   let b:J6uil_current_room = a:room
 
