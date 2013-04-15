@@ -1,0 +1,145 @@
+*J6uil.txt*	lingr client.
+
+Version: 0.1 
+Author: basyura <basyura@gmail.com>
+License: MIT License
+
+==============================================================================
+CONTENTS					*J6uil-contents*
+
+INTRODUCTION			|J6uil-introduction|
+STARTUP				||J6uil-startup|
+INTERFACE			|J6uil-interface|
+  COMMANDS			  |J6uil-commands|
+  KEY MAPPINGS			  |J6uil-key-mappings|
+VARIABLES			|J6uil-variables|
+
+==============================================================================
+INTRODUCTION					*J6uil-introduction*
+
+*J6uil* is lingr client.
+
+Latest Version:
+https://github.com/basyura/J6uil.vim/
+
+Requirement:
+(*) optional
+
+	cURL
+	http://curl.haxx.se/
+
+	vimproc
+        https://github.com/Shougo/vimproc
+
+	open-browser.vim
+	https://github.com/tyru/open-browser.vim)
+
+	unite.vim (*)
+	https://github.com/Shougo/unite.vim
+
+==============================================================================
+STARTUP						*J6uil-startup*
+
+Thank you for using J6uil.
+First, execute command.
+>
+	:J6uil {room}<CR>
+<
+If you don't define these user/password variables, please input by prompt.
+>
+	let g:J6uil_user     = 'your user name'
+	let g:J6uil_password = 'your password'
+
+	or
+
+	let g:lingr_vim_user     = 'your user name'
+	let g:lingr_vim_password = 'you password'
+<
+Then, current room's messages are displayed
+
+If you want to say in current room, open say-buffer by s in normal mode and write your message.
+You can post messages by <CR> in normal mode or <C-CR> in insert mode.
+
+enjoy!
+
+==============================================================================
+INTERFACE					*J6uil-interface*
+
+------------------------------------------------------------------------------
+COMMANDS					*J6uil-commands*
+
+:J6uil {room}                                   *:J6uil*
+                start lingr.
+
+:J6uilReconnect                                 *:J6uilReconnect*
+                reconnect to lingr.
+
+:J6uilDisconnect                                *:J6uilDisconnect*
+                disconnect from lingr.
+
+
+------------------------------------------------------------------------------
+KEY MAPPINGS					*J6uil-key-mappings*
+
+
+<Plug>(J6uil_open_say_buffer)                   *<Plug>(J6uil_open_say_buffer)*
+		open say buffer
+		default : s
+
+<Plug>(J6uil_reconnect)                         *<Plug>(J6uil_reconnect)*
+		reconnect to lingr.
+		default : <Leader><Leader>r
+
+<Plug>(J6uil_disconnect)                        *<Plug>(J6uil_disconnect)*
+		disconnect from lingr.
+		default : <Leader><Leader>d
+
+<Plug>(J6uil_unite_rooms)                       *<Plug>(J6uil_unite_rooms)*
+		open unite.vim buffer to change room.
+		default : <Leader>r
+
+<Plug>(J6uil_unite_members)                     *<Plug>(J6uil_unite_members)*
+		open unite.vim buffer to show members in current room.
+		default : <leader>u
+
+==============================================================================
+VARIABLES 					*J6uil-variables*
+
+g:J6uil_config_dir		         	*g:J6uil_config_dir*
+		config's directory.
+		default : ~/.J6uil
+
+g:J6uil_insert_offline		         	*g:J6uil_insert_offline*
+		insert offline message to buffer.
+		default : 0
+
+g:J6uil_insert_online		         	*g:J6uil_insert_online*
+		insert onlin message to buffer.
+		default : 0
+
+g:J6uil_echo_presence                           *g:J6uil_echo_presence*
+                you can see presence (online/offline) by echo.
+		default : 1
+
+g:J6uil_echo_interval                           *g:J6uil_echo_interval*
+                echo interval from last lingr api's response.
+		default : 0
+
+g:J6uil_updatetime                              *g:J6uil_updatetime*
+                interval time to update buffer.
+                this value changed &updatetime temporally.
+		default : 1000
+
+g:J6uil_open_buffer_cmd                         *g:J6uil_open_buffer_cmd*
+                commadn to open J6uil buffer.
+		default : edit!
+
+g:J6uil_display_icon                           *g:J6uil_display_icon*
+                display icon by :sign.
+                to use this, you have to install ImageMagick.
+                downloaded icons are saved in g:J6uil_config_dir/icon
+                directory.
+		default : 0
+
+==============================================================================
+vim:tw=78:fo=tcq2mM:ts=8:ft=help:norl

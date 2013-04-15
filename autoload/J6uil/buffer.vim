@@ -155,8 +155,8 @@ function! s:update_message(message, line_expr, cnt)
 
   if g:J6uil_display_icon && substitute(nickname, ' ', '', 'g') != ''
     let current_dir = getcwd()
-    execute "cd " . expand('~/.J6uil/icon')
-    let ico_path  =  expand('~/.J6uil/icon') . '/' . message.speaker_id . ".ico"
+    execute "cd " . g:J6uil_config_dir
+    let ico_path  = g:J6uil_config_dir . '/icon/' . message.speaker_id . ".ico"
     let img_url   = message.icon_url
     let file_name = fnamemodify(img_url, ":t")
 
@@ -189,10 +189,10 @@ function! s:update_presence(presence)
   if g:J6uil_echo_presence
     echo a:presence.text
   endif
-  if !g:J6uil_display_offline && a:presence.status == 'offline'
+  if !g:J6uil_insert_offline && a:presence.status == 'offline'
     return
   endif
-  if !g:J6uil_display_online  && a:presence.status == 'online'
+  if !g:J6uil_insert_online  && a:presence.status == 'online'
     return
   endif
   call append(line('$'), s:ljust('', 12) . '   ' . a:presence.text)
@@ -259,12 +259,12 @@ endfunction
 
 function! s:define_default_key_mappings()
   augroup J6uil_buffer
-    nnoremap <silent> <buffer> s :call J6uil#say#open(J6uil#buffer#current_room())<CR>
-    nnoremap <silent> <buffer> <CR>      :call <SID>enter_action()<CR>
-    nnoremap <silent> <buffer> <Leader>r :Unite J6uil/rooms   -buffer-name=J6uil_rooms<CR>
-    nnoremap <silent> <buffer> <Leader>u :Unite J6uil/members -buffer-name=J6uil_members<CR>
-    nnoremap <silent> <buffer> <Leader><Leader>r :J6uilReconnect<CR>
-    nnoremap <silent> <buffer> <Leader><Leader>d :J6uilDisconnect<CR>
+    nmap <silent> <buffer> s                 <Plug>(J6uil_open_say_buffer)
+    nmap <silent> <buffer> <Leader><Leader>r <Plug>(J6uil_reconnect)
+    nmap <silent> <buffer> <Leader><Leader>d <Plug>(J6uil_disconnect)
+    nmap <silent> <buffer> <Leader>r         <Plug>(J6uil_unite_rooms)
+    nmap <silent> <buffer> <Leader>u         <Plug>(J6uil_unite_members)
+    nnoremap <silent> <buffer> <CR>          :call <SID>enter_action()<CR>
   augroup END
 endfunction
 

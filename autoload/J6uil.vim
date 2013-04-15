@@ -134,7 +134,7 @@ endfunction
 function! s:check_connection()
   silent! call feedkeys("g\<Esc>", "n")
   " debug
-  if g:J6uil_display_interval
+  if g:J6uil_echo_interval
     echo ' connection ' . (J6uil#thread#is_exists() ? 'ok' : 'ng') . ' : ' .  string(localtime() - s:connect_time)
   endif
 
