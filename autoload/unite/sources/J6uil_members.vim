@@ -20,6 +20,6 @@ endfunction
 
 let s:source.action_table.execute = {'description' : 'show users'}
 function! s:source.action_table.execute.func(candidate)
-  let room = a:candidate.word
-  call J6uil#subscribe(room)
+  redraw
+  echo "no implemented."
 endfunction

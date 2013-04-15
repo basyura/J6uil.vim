@@ -7,11 +7,12 @@ License: MIT License
 ==============================================================================
 CONTENTS					*J6uil-contents*
 
-INTRODUCTION			|J6uil-introduction|
+INTRODUCTION		|J6uil-introduction|
 STARTUP				||J6uil-startup|
 INTERFACE			|J6uil-interface|
-  COMMANDS			  |J6uil-commands|
-  KEY MAPPINGS			  |J6uil-key-mappings|
+  COMMANDS			|J6uil-commands|
+  KEY MAPPINGS			|J6uil-key-mappings|
+  UNITE				|J6uil-unite|
 VARIABLES			|J6uil-variables|
 BUFFERERS			|J6uil-bufferes|
 
@@ -103,6 +104,19 @@ KEY MAPPINGS					*J6uil-key-mappings*
 <Plug>(J6uil_unite_members)                     *<Plug>(J6uil_unite_members)*
 		open unite.vim buffer to show members in current room.
 		default : <leader>u
+
+------------------------------------------------------------------------------
+UNITE       					*J6uil-unite*
+
+if you can use unite.vim, these sources are available;
+
+:Unite J6uil/rooms
+		source of rooms.
+		you can change room.
+
+:Unite J6uil/members
+		source of members of room.
+		no action.
 
 ==============================================================================
 VARIABLES 					*J6uil-variables*
