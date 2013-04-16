@@ -24,6 +24,10 @@ function! s:lingr.login()
               \ 'password' : self.password,
               \ })
 
+  if ret.status == 'error'
+    throw 'code   : ' . ret.code . "\n" . 'detail : ' . ret.detail
+  endif
+
   let self.session = ret.session
 
   return self.session

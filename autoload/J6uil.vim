@@ -22,7 +22,14 @@ function! J6uil#subscribe(room)
       echohl None
       return
     endtry
-    let s:lingr = J6uil#lingr#new(user, pass)
+    try
+      let s:lingr = J6uil#lingr#new(user, pass)
+    catch
+      call J6uil#disconnect()
+      redraw
+      echohl Error | echo "failed to login \n" . v:exception | echohl None
+      return
+    endtry
   else
     call s:lingr.verify_and_relogin()
   endif
