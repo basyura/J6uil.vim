@@ -137,7 +137,7 @@ g:J6uil_echo_presence                           *g:J6uil_echo_presence*
 		you can see presence (online/offline) by echo.
 		default : 1
 
-g:J6uil_echo_interval                           *g:J6uil_echo_interval*
+g:J6uil_debug_mode                              *g:J6uil_debug_mode*
 		echo interval from last lingr api's response.
 		default : 0
 

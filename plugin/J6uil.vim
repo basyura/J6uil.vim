@@ -24,7 +24,7 @@ call s:set('J6uil_insert_offline'  , 0)
 call s:set('J6uil_insert_online'   , 0)
 call s:set('J6uil_echo_presence'   , 1)
 call s:set('J6uil_display_icon'    , 0)
-call s:set('J6uil_echo_interval'   , 0)
+call s:set('J6uil_debug_mode'      , 0)
 call s:set('J6uil_updatetime'      , 1000)
 call s:set('J6uil_open_buffer_cmd' , 'edit!')
 

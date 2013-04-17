@@ -21,8 +21,8 @@ endfunction
 
 function! s:release(threads)
     for thread in a:threads
-        echomsg 'J6uil killed ' . thread.vimproc.pid
-        call vimproc#kill(thread.vimproc.pid, 9)
+      if g:J6uil_debug_mode | echomsg 'J6uil killed ' . thread.vimproc.pid | endif
+      call vimproc#kill(thread.vimproc.pid, 9)
     endfor
 endfunction
 
