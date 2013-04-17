@@ -14,7 +14,7 @@ function! s:source.gather_candidates(args, context)
   " members : ['timestamp', 'pokeable', 'name', 'is_online', 'username', 'is_owner', 'icon_url'] 
   return map(copy(b:J6uil_roster.members), '{
              \ "word" : v:val.name,
-             \ "abbr" : (v:val.is_online ? "+ " : "  ") .  v:val.name,
+             \ "abbr" : (v:val.is_online ? "+ " : "  ") . (v:val.is_owner ? "★ " : "") . v:val.name,
              \ }')
 endfunction
 
