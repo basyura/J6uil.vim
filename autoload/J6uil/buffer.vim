@@ -42,6 +42,7 @@ function! J6uil#buffer#switch(room, status)
   execute "normal! G"
   setlocal nomodified
   setlocal nomodifiable
+  call s:cache_buffer()
 endfunction
 
 let s:que = []
@@ -128,6 +129,10 @@ function! s:update(events)
       call s:update_presence(event.presence)
     endif
   endfor
+  " cache for say buffer
+  if counter > 0
+    call s:cache_buffer()
+  endif
   return counter
 endfunction
 
@@ -294,5 +299,12 @@ function! s:ljust(str, size, ...)
   endwhile
   return str
 endfunction
+
+function! s:cache_buffer()
+  if exists(":NeoComplCacheCachingBuffer")
+    :NeoComplCacheCachingBuffer
+  endif
+endfunction
+
 
 let &cpo = s:save_cpo

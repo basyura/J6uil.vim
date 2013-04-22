@@ -45,11 +45,6 @@ function! J6uil#subscribe(room)
   call J6uil#buffer#switch(room, status)
 
   call s:observe_start(s:lingr)
-
-  " cache for say buffer
-  if exists(":NeoComplCacheCachingBuffer")
-    :NeoComplCacheCachingBuffer
-  endif
 endfunction
 
 
@@ -128,10 +123,6 @@ function! J6uil#__update(res)
 
   if has_key(json, 'events')
     call J6uil#buffer#update(json)
-    " cache for say buffer
-    if exists(":NeoComplCacheCachingBuffer")
-      :NeoComplCacheCachingBuffer
-    endif
   endif
 
   " if over 2 minutes return status ok only ?
