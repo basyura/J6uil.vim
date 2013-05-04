@@ -156,6 +156,11 @@ function! s:update_message(message, line_expr, cnt)
     let  b:J6uil_oldest_id = message.id
   end
 
+  if g:J6uil_display_separator && nickname != s:blank_nickname
+    call append(line(a:line_expr) + a:cnt, s:separator("-"))
+  end
+
+
   call append(line(a:line_expr) + a:cnt, nickname . list[0])
 
   if g:J6uil_display_icon && substitute(nickname, ' ', '', 'g') != ''
@@ -306,5 +311,23 @@ function! s:cache_buffer()
   endif
 endfunction
 
+function! s:separator(s)
+  let max = s:bufwidth() - (g:J6uil_display_icon ? 2 : 0)
+
+  let sep = ""
+  while len(sep) < max
+    let sep .= a:s
+  endwhile
+  return sep
+endfunction
+
+
+function! s:bufwidth()
+  let width = winwidth(0)
+  if &l:number || &l:relativenumber
+    let width = width - (&numberwidth + 1)
+  endif
+  return width
+endfunction
 
 let &cpo = s:save_cpo
