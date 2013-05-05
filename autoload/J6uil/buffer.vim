@@ -188,7 +188,7 @@ function! s:update_message(message, line_expr, cnt)
   endif
 
   for msg in list[1:]
-    call append(line(a:line_expr), s:ljust('', 12) . '    ' . msg)
+    call append(line(a:line_expr) + a:cnt, s:ljust('', 12) . '    ' . msg)
   endfor
 
   return len(list) 
