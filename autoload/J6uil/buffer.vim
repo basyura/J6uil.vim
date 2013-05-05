@@ -275,6 +275,7 @@ function! s:define_default_key_mappings()
     nmap <silent> <buffer> <Leader>r         <Plug>(J6uil_unite_rooms)
     nmap <silent> <buffer> <Leader>u         <Plug>(J6uil_unite_members)
     nnoremap <silent> <buffer> <CR>          :call <SID>enter_action()<CR>
+    nnoremap <silent> <buffer> o             :call <SID>open_links_action()<CR>
   augroup END
 endfunction
 
@@ -291,6 +292,18 @@ function! s:enter_action()
     execute "OpenBrowser " . matched[0]
     return
   endif
+endfunction
+
+function! s:open_links_action()
+  let text = getline(".")
+  while 1
+    let matched = matchlist(text, 'https\?://[0-9A-Za-z_#?~=\-+%\.\/:]\+')
+    if len(matched) == 0
+      break
+    endif
+    execute "OpenBrowser " . matched[0]
+    let text = substitute(text , matched[0] , "" , "g")
+  endwhile
 endfunction
 
 function! s:ljust(str, size, ...)
