@@ -1,8 +1,17 @@
 let s:save_cpo = &cpo
 set cpo&vim
 
-let s:api_root = 'http://lingr.com/api/'
 let s:connect_time = localtime()
+
+let s:config = {
+  \ 'buf_name'          : 'J6uil',
+  \ 'archive_statement' : '-- archive --',
+  \ 'blank_nickname'    : '                ',
+  \ }
+
+function! J6uil#config()
+  return s:config
+endfunction
 
 function! J6uil#subscribe(room)
 
@@ -170,6 +179,11 @@ function! s:check_connection()
     sleep 2
     call s:check_connection()
   endtry
+endfunction
+
+function! J6uil#action(name)
+  let Fn = function('J6uil#action#' . a:name . '#execute')
+  call Fn()
 endfunction
 
 let &cpo = s:save_cpo

@@ -4,16 +4,13 @@ set cpo&vim
 let s:Vital    = vital#of('J6uil')
 let s:DateTime = s:Vital.import('DateTime')
 
-let s:buf_name = 'J6uil'
-
-let s:archive_statement = '-- archive --'
-let s:blank_nickname    = '                '
-
-let s:last_bufnr = 0
-
-let s:current_room = '' 
-
+let s:last_bufnr      = 0
+let s:current_room    = '' 
 let s:before_msg_user = ''
+
+function! s:config()
+  return J6uil#config()
+endfunction
 
 function! J6uil#buffer#current_room()
   return s:current_room
@@ -48,7 +45,7 @@ endfunction
 let s:que = []
 
 function! J6uil#buffer#is_current()
-  return bufname("%") == s:buf_name
+  return bufname("%") == s:config().buf_name
 endfunction
 
 function! J6uil#buffer#has_que()
@@ -107,12 +104,13 @@ function! J6uil#buffer#load_archives(room, messages)
     "execute "normal! " . cnt . "\<Down>"
   endfor
 
-  call append(0, s:archive_statement)
+  call append(0, s:config().archive_statement)
 
   let  b:J6uil_oldest_id = a:messages[0].id
   setlocal nomodifiable
 endfunction
-
+"
+"
 function! s:update(events)
   let counter = 0
   for event in  a:events
@@ -135,7 +133,8 @@ function! s:update(events)
   endif
   return counter
 endfunction
-
+"
+"
 function! s:update_message(message, line_expr, cnt)
   let message = a:message
   let list = split(message.text, '\n')
@@ -145,18 +144,18 @@ function! s:update_message(message, line_expr, cnt)
 
   let nickname = message.nickname
   if nickname == s:before_msg_user || nickname == 'URL Info.'
-    let nickname = s:blank_nickname
+    let nickname = s:config().blank_nickname
   else
     let s:before_msg_user = nickname
     let nickname = (g:J6uil_display_icon ?  ' ' : '') . s:ljust(nickname, 12) . (g:J6uil_display_icon ?  '' : ' ') . ' : '
   endif
 
   if getline(1) == ''
-    call append(0, s:archive_statement)
+    call append(0, s:config().archive_statement)
     let  b:J6uil_oldest_id = message.id
   end
 
-  if g:J6uil_display_separator && nickname != s:blank_nickname
+  if g:J6uil_display_separator && nickname != s:config().blank_nickname
     call append(line(a:line_expr) + a:cnt, s:separator("-"))
   end
 
@@ -194,7 +193,8 @@ function! s:update_message(message, line_expr, cnt)
 
   return len(list) 
 endfunction
-
+"
+"
 function! s:update_presence(presence)
   if g:J6uil_echo_presence
     echo a:presence.text
@@ -207,7 +207,8 @@ function! s:update_presence(presence)
   endif
   call append(line('$'), s:ljust('', 12) . '   ' . a:presence.text)
 endfunction
-
+"
+"
 function! s:switch_buffer()
   " get buf no from buffer's name
   let bufnr = -1
@@ -221,7 +222,7 @@ function! s:switch_buffer()
   endwhile
   " buf is not exist
   if bufnr < 0
-    execute g:J6uil_open_buffer_cmd . ' ' . s:buf_name
+    execute g:J6uil_open_buffer_cmd . ' ' . s:config().buf_name
     let s:last_bufnr = bufnr("")
     return
   endif
@@ -239,11 +240,12 @@ function! s:switch_buffer()
     execute 'buffer ' . bufnr
   else
     " buf is already deleted
-    execute 'split ' . s:buf_name
+    execute 'split ' . s:config().buf_name
     let s:last_bufnr = bufnr("")
   endif
 endfunction
-
+"
+"
 function! s:buf_setting()
   setlocal noswapfile
   setlocal modifiable
@@ -266,7 +268,8 @@ function! s:buf_setting()
     autocmd! BufUnload  <buffer> :J6uilDisconnect
   augroup END
 endfunction
-
+"
+"
 function! s:define_default_key_mappings()
   augroup J6uil_buffer
     nmap <silent> <buffer> s                 <Plug>(J6uil_open_say_buffer)
@@ -274,38 +277,12 @@ function! s:define_default_key_mappings()
     nmap <silent> <buffer> <Leader><Leader>d <Plug>(J6uil_disconnect)
     nmap <silent> <buffer> <Leader>r         <Plug>(J6uil_unite_rooms)
     nmap <silent> <buffer> <Leader>u         <Plug>(J6uil_unite_members)
-    nnoremap <silent> <buffer> <CR>          :call <SID>enter_action()<CR>
-    nnoremap <silent> <buffer> o             :call <SID>open_links_action()<CR>
+    nmap <silent> <buffer> <CR>              <Plug>(J6uil_action_enter)
+    nmap <silent> <buffer> o                 <Plug>(J6uil_action_open_links)
   augroup END
 endfunction
-
-
-function! s:enter_action()
-  if getline(".") == s:archive_statement
-    call J6uil#load_archives(s:current_room, b:J6uil_oldest_id)
-    return
-  endif
-
-  let word = expand('<cWORD>')
-  let matched = matchlist(word, 'https\?://[0-9A-Za-z_#?~=\-+%\.\/:!]\+')
-  if len(matched) != 0
-    execute "OpenBrowser " . matched[0]
-    return
-  endif
-endfunction
-
-function! s:open_links_action()
-  let text = getline(".")
-  while 1
-    let matched = matchlist(text, 'https\?://[0-9A-Za-z_#?~=\-+%\.\/:]\+')
-    if len(matched) == 0
-      break
-    endif
-    execute "OpenBrowser " . matched[0]
-    let text = substitute(text , matched[0] , "" , "g")
-  endwhile
-endfunction
-
+"
+"
 function! s:ljust(str, size, ...)
   let str = a:str
   let c   = a:0 > 0 ? a:000[0] : ' '
@@ -317,13 +294,15 @@ function! s:ljust(str, size, ...)
   endwhile
   return str
 endfunction
-
+"
+"
 function! s:cache_buffer()
   if exists(":NeoComplCacheCachingBuffer")
     :NeoComplCacheCachingBuffer
   endif
 endfunction
-
+"
+"
 function! s:separator(s)
   let max = s:bufwidth() - (g:J6uil_display_icon ? 2 : 0)
 
@@ -333,8 +312,8 @@ function! s:separator(s)
   endwhile
   return sep
 endfunction
-
-
+"
+"
 function! s:bufwidth()
   let width = winwidth(0)
   if &l:number || &l:relativenumber

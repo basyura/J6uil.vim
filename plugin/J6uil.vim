@@ -51,16 +51,19 @@ command! -nargs=0 J6uilDisconnect :call J6uil#disconnect()
 "       key maps       "
 """"""""""""""""""""""""
 "
-nnoremap <silent> <Plug>(J6uil_open_say_buffer) :<C-u>call J6uil#say#open(J6uil#buffer#current_room())<CR>
+nnoremap <silent> <Plug>(J6uil_open_say_buffer)   :<C-u>call J6uil#say#open(J6uil#buffer#current_room())<CR>
 "
-nnoremap <silent> <Plug>(J6uil_reconnect)       :<C-u>J6uilReconnect<CR>
+nnoremap <silent> <Plug>(J6uil_reconnect)         :<C-u>J6uilReconnect<CR>
 "
-nnoremap <silent> <Plug>(J6uil_disconnect)      :<C-u>J6uilDisconnect<CR>
+nnoremap <silent> <Plug>(J6uil_disconnect)        :<C-u>J6uilDisconnect<CR>
 "
-nnoremap <silent> <Plug>(J6uil_unite_rooms)     :<C-u>Unite J6uil/rooms -buffer-name=J6uil_rooms<CR>
+nnoremap <silent> <Plug>(J6uil_unite_rooms)       :<C-u>Unite J6uil/rooms -buffer-name=J6uil_rooms<CR>
 "
-nnoremap <silent> <Plug>(J6uil_unite_members)   :<C-u>Unite J6uil/members -buffer-name=J6uil_members<CR>
-
+nnoremap <silent> <Plug>(J6uil_unite_members)     :<C-u>Unite J6uil/members -buffer-name=J6uil_members<CR>
+"
+nnoremap <silent> <Plug>(J6uil_action_enter)      :<C-u>call J6uil#action('enter')<CR>
+"
+nnoremap <silent> <Plug>(J6uil_action_open_links) :<C-u>call J6uil#action('open_links')<CR>
 
 
 
