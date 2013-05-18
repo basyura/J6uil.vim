@@ -136,6 +136,15 @@ endfunction
 "
 "
 function! s:update_message(message, line_expr, cnt)
+  " check duplicate message
+  if !exists('b:J6uil_latest_message_id')
+    let b:J6uil_latest_message_id = 0
+  end
+  if b:J6uil_latest_message_id == a:message.id
+    return
+  end
+  let b:J6uil_latest_message_id = a:message.id
+
   let message = a:message
   let list = split(message.text, '\n')
 
