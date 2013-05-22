@@ -59,6 +59,25 @@ function! s:scan(str, pattern)
   return list
 endfunction
 
+function! s:reverse(str)
+  return join(reverse(split(a:str, '.\zs')), '')
+endfunction
+
+function! s:common_head(strs)
+  if empty(a:strs)
+    return ''
+  endif
+  let head = a:strs[0]
+  for str in a:strs[1 :]
+    let pat = substitute(str, '.', '[\0]', 'g')
+    let head = matchstr(head, '^\%[' . pat . ']')
+    if head ==# ''
+      break
+    endif
+  endfor
+  return head
+endfunction
+
 " Split to two elements of List. ([left, right])
 " e.g.: s:split3('neocomplcache', 'compl') returns ['neo', 'compl', 'cache']
 function! s:split_leftright(expr, pattern)
@@ -142,33 +161,38 @@ function! s:chop(str) "{{{
 endfunction "}}}
 
 " wrap() and its internal functions
-" * _split_by_wcswitdh_once()
-" * _split_by_wcswitdh()
+" * _split_by_wcswidth_once()
+" * _split_by_wcswidth()
 " * _concat()
 " * wrap()
 "
 " NOTE _concat() is just a copy of Data.List.concat().
 " FIXME don't repeat yourself
-function! s:_split_by_wcswitdh_once(body, x)
-  return [
-        \ s:V.strwidthpart(a:body, a:x),
-        \ s:V.strwidthpart_reverse(a:body, s:V.wcswidth(a:body) - a:x)]
+function! s:_split_by_wcswidth_once(body, x)
+  let fst = s:V.strwidthpart(a:body, a:x)
+  let snd = s:V.strwidthpart_reverse(a:body, s:V.wcswidth(a:body) - s:V.wcswidth(fst))
+  return [fst, snd]
 endfunction
 
-function! s:_split_by_wcswitdh(body, x)
+function! s:_split_by_wcswidth(body, x)
   let memo = []
   let body = a:body
   while s:V.wcswidth(body) > a:x
-    let [tmp, body] = s:_split_by_wcswitdh_once(body, a:x)
+    let [tmp, body] = s:_split_by_wcswidth_once(body, a:x)
     call add(memo, tmp)
   endwhile
   call add(memo, body)
   return memo
 endfunction
 
-function! s:wrap(str)
+function! s:trim(str)
+  return matchstr(a:str,'^\s*\zs.\{-}\ze\s*$')
+endfunction
+
+function! s:wrap(str,...)
+  let _columns = a:0 > 0 ? a:1 : &columns
   return s:L.concat(
-        \ map(split(a:str, '\r\?\n'), 's:_split_by_wcswitdh(v:val, &columns - 1)'))
+        \ map(split(a:str, '\r\?\n'), 's:_split_by_wcswidth(v:val, _columns - 1)'))
 endfunction
 
 function! s:nr2byte(nr)
