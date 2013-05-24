@@ -68,12 +68,20 @@ function! s:lingr.room_show(room)
 endfunction
 
 function! s:lingr.say(room, msg)
+  if s:has_vimproc()
+    call s:post_async('room/say', {
+          \ 'session' : self.session,
+          \ 'room'    : a:room,
+          \ 'text'    : a:msg,
+          \ },{})
+    return 1
+  end
+
   return s:get('room/say', {
         \ 'session' : self.session,
         \ 'room'    : a:room,
         \ 'text'    : a:msg,
         \ }).status == 'ok'
-
 endfunction
 
 function! s:lingr.subscribe(...)
@@ -108,6 +116,95 @@ function! s:get(url, param)
   return webapi#json#decode(res.content)
 endfunction
 
+function! s:post_async(url, query, headdata)
+  let url      = s:api_root . a:url
+  let postdata = a:query
+  let headdata = a:headdata
+  let method   = "POST"
+  if type(postdata) == 4
+    let postdatastr = webapi#http#encodeURI(postdata)
+  else
+    let postdatastr = postdata
+  endif
+  let command = 'curl -L -s -k -i -X '.method
+  let quote = &shellxquote == '"' ?  "'" : '"'
+  for key in keys(headdata)
+    if has('win32')
+      let command .= " -H " . quote . key . ": " . substitute(headdata[key], '"', '"""', 'g') . quote
+    else
+      let command .= " -H " . quote . key . ": " . headdata[key] . quote
+	endif
+  endfor
+  let command .= " ".quote.url.quote
+  let file = tempname()
+  call writefile(split(postdatastr, "\n"), file, "b")
+  " async post
+  let cmd_line = command . " --data-binary @" . substitute(quote.file.quote, '\\', '/', "g")
+
+  let s:vimproc = vimproc#pgroup_open(cmd_line)
+  call s:vimproc.stdin.close()
+  let s:result = ""
+
+  augroup J6uil-async-receive
+    execute "autocmd! CursorHold,CursorHoldI * call"
+          \ "s:receive_vimproc_result('" . webapi#json#encode({"file" : file})  . "')"
+  augroup END
+endfunction
+
+function! s:receive_vimproc_result(param)
+  if !has_key(s:, "vimproc")
+    return
+  endif
+
+  let vimproc = s:vimproc
+
+  try
+    if !vimproc.stdout.eof
+      let s:result .= vimproc.stdout.read()
+    endif
+
+    if !vimproc.stderr.eof
+      let s:result .= vimproc.stderr.read()
+    endif
+
+    if !(vimproc.stdout.eof && vimproc.stderr.eof)
+      return 0
+    endif
+  catch
+    echom v:throwpoint
+  endtry
+
+  let param = webapi#json#decode(a:param)
+
+  call delete(param.file)
+
+  "call function(a:handler)(s:result, a:param)
+
+  augroup J6uil-async-receive
+    autocmd!
+  augroup END
+
+  call vimproc.stdout.close()
+  call vimproc.stderr.close()
+  call vimproc.waitpid()
+  unlet s:vimproc
+  unlet s:result
+endfunction
+
+
+
+
+function! s:has_vimproc()
+  if !exists('s:exists_vimproc')
+    try
+      call vimproc#version()
+      let s:exists_vimproc = 1
+    catch
+      let s:exists_vimproc = 0
+    endtry
+  endif
+  return s:exists_vimproc
+endfunction
 
 function! s:post(url, param)
   let res = webapi#http#post(s:api_root . a:url, a:param)
