@@ -25,7 +25,7 @@ Settings
     let g:lingr_vim_user     = 'your user name'
     let g:lingr_vim_password = 'you password'
 
-    let g:6uil_display_offline   = 0
+    let g:J6uil_display_offline  = 0
     let g:J6uil_display_online   = 0
     let g:J6uil_echo_presence    = 1
     let g:J6uil_display_icon     = 0
