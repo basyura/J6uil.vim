@@ -27,6 +27,7 @@ function! s:define_default_settings_say()
     nnoremap <silent> <buffer> <Enter> :call <SID>post_message()<CR>
     inoremap <silent> <buffer> <C-CR>  <ESC>:call <SID>post_message()<CR>
     nnoremap <silent> <buffer> <C-j> :bd!<CR>
+    nnoremap <silent> <buffer> <esc> :bd!<CR>
     setlocal nonu
   augroup END
 endfunction

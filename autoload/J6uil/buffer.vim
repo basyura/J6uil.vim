@@ -156,7 +156,7 @@ function! s:update_message(message, line_expr, cnt)
     let nickname = s:config().blank_nickname
   else
     let s:before_msg_user = nickname
-    let nickname = (g:J6uil_display_icon ?  ' ' : '') . s:ljust(nickname, 12) . (g:J6uil_display_icon ?  '' : ' ') . ' : '
+    let nickname = (s:is_display_icon() ?  ' ' : '') . s:ljust(nickname, 12) . (s:is_display_icon() ?  '' : ' ') . ' : '
   endif
 
   if getline(1) == ''
@@ -171,7 +171,7 @@ function! s:update_message(message, line_expr, cnt)
 
   call append(line(a:line_expr) + a:cnt, nickname . list[0])
 
-  if g:J6uil_display_icon && substitute(nickname, ' ', '', 'g') != ''
+  if s:is_display_icon() && substitute(nickname, ' ', '', 'g') != ''
     let current_dir = getcwd()
     execute "cd " . g:J6uil_config_dir
     let ico_path  = g:J6uil_config_dir . '/icon/' . message.speaker_id . ".ico"
@@ -313,7 +313,7 @@ endfunction
 "
 "
 function! s:separator(s)
-  let max = s:bufwidth() - (g:J6uil_display_icon ? 2 : 0)
+  let max = s:bufwidth() - (s:is_display_icon() ? 2 : 0)
 
   let sep = ""
   while len(sep) < max
@@ -329,6 +329,10 @@ function! s:bufwidth()
     let width = width - (&numberwidth + 1)
   endif
   return width
+endfunction
+
+function! s:is_display_icon()
+  return g:J6uil_display_icon && has('signs') && has('gui_running')
 endfunction
 
 let &cpo = s:save_cpo
