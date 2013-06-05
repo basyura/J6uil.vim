@@ -4,6 +4,7 @@ set cpo&vim
 
 let s:Vital    = vital#of('J6uil')
 let s:DateTime = s:Vital.import('DateTime')
+let s:Prelude  = s:Vital.import('Prelude')
 
 let s:last_bufnr      = 0
 let s:current_room    = '' 
@@ -128,6 +129,9 @@ function! J6uil#buffer#statusline()
   if status == ''
     let status = 'no updated message'
   endif
+  while len(status) < winwidth(0) - 4
+    let status = ' ' . status
+  endwhile
   return status
 endfunction
 "
@@ -138,7 +142,8 @@ function! s:update(events)
     if has_key(event, 'message')
       if event.message.room != s:current_room
         call s:cache(event.message, 0)
-        echo event.message.room . ' - ' event.message.nickname . ' : ' . event.message.text
+        redraw
+        echo s:Prelude.truncate('[' . event.message.room . '] ' . event.message.nickname . ' : ' . split(event.message.text, '\r')[0], winwidth(0))
         continue
       endif
       call s:cache(event.message, 1)
