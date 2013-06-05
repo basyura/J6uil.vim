@@ -141,13 +141,15 @@ function! s:update(events)
     if has_key(event, 'message')
       if event.message.room != s:current_room
         call s:cache(event.message, 0)
-        redraw!
-        echo s:truncate('[' . event.message.room . '] ' . event.message.nickname . ' : ' . split(event.message.text, '\n')[0], winwidth(0) - 20)
-        continue
+        "echo s:truncate('[' . event.message.room . '] ' . event.message.nickname . ' : ' . split(event.message.text, '\n')[0], winwidth(0) - 20)
+        "
+      else
+        call s:cache(event.message, 1)
+        call s:update_message(event.message, '$', 0)
+        let counter += 1
       endif
-      call s:cache(event.message, 1)
-      call s:update_message(event.message, '$', 0)
-      let counter += 1
+      redraw!
+      echo J6uil#buffer#statusline()
     elseif has_key(event, 'presence')
       if event.presence.room != s:current_room
         continue
