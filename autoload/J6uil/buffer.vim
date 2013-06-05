@@ -1,3 +1,4 @@
+scriptencoding utf-8
 let s:save_cpo = &cpo
 set cpo&vim
 
@@ -7,6 +8,10 @@ let s:DateTime = s:Vital.import('DateTime')
 let s:last_bufnr      = 0
 let s:current_room    = '' 
 let s:before_msg_user = ''
+
+" key : room, value : [message]
+let s:cache_message = {}
+let s:cache_count   = {}
 
 function! s:config()
   return J6uil#config()
@@ -18,6 +23,7 @@ endfunction
 
 function! J6uil#buffer#switch(room, status)
   let s:current_room = a:room
+  let s:cache_count[a:room] = 0
   call s:switch_buffer()
   call s:buf_setting()
 
@@ -111,14 +117,31 @@ function! J6uil#buffer#load_archives(room, messages)
 endfunction
 "
 "
+function! J6uil#buffer#statusline()
+  let status = ''
+  for key in keys(s:cache_count)
+    let cnt = s:cache_count[key]
+    if cnt > 0
+      let status .= key . '(' . string(cnt) . ') '
+    endif
+  endfor
+  if status == ''
+    let status = 'no updated message'
+  endif
+  return status
+endfunction
+"
+"
 function! s:update(events)
   let counter = 0
   for event in  a:events
     if has_key(event, 'message')
       if event.message.room != s:current_room
+        call s:cache(event.message, 0)
         echo event.message.room . ' - ' event.message.nickname . ' : ' . event.message.text
         continue
       endif
+      call s:cache(event.message, 1)
       call s:update_message(event.message, '$', 0)
       let counter += 1
     elseif has_key(event, 'presence')
@@ -219,6 +242,19 @@ function! s:update_presence(presence)
 endfunction
 "
 "
+function! s:cache(message, is_read)
+  let message = a:message
+  if !has_key(s:cache_message, message.room)
+    let s:cache_message[message.room] = []
+    let s:cache_count[message.room]    = 0
+  end
+  call add(s:cache_message[message.room], message)
+  if !a:is_read
+    let s:cache_count[message.room] += 1
+  endif
+endfunction
+"
+"
 function! s:switch_buffer()
   " get buf no from buffer's name
   let bufnr = -1
@@ -269,6 +305,9 @@ function! s:buf_setting()
   if !exists('b:J6uil_saved_updatetime')
     let b:J6uil_saved_updatetime = &updatetime
   endif
+
+  setlocal statusline=%!J6uil#buffer#statusline()
+
   let &updatetime = g:J6uil_updatetime
   augroup J6uil-buffer
     autocmd!
