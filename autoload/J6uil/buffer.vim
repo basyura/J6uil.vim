@@ -234,6 +234,7 @@ endfunction
 "
 function! s:update_presence(presence)
   if g:J6uil_echo_presence
+    redraw!
     echo a:presence.text
   endif
   if !g:J6uil_insert_offline && a:presence.status == 'offline'
