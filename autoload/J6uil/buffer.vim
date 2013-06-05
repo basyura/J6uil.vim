@@ -4,7 +4,6 @@ set cpo&vim
 
 let s:Vital    = vital#of('J6uil')
 let s:DateTime = s:Vital.import('DateTime')
-let s:Prelude  = s:Vital.import('Prelude')
 
 let s:last_bufnr      = 0
 let s:current_room    = '' 
@@ -142,8 +141,8 @@ function! s:update(events)
     if has_key(event, 'message')
       if event.message.room != s:current_room
         call s:cache(event.message, 0)
-        redraw
-        echo s:Prelude.truncate('[' . event.message.room . '] ' . event.message.nickname . ' : ' . split(event.message.text, '\r')[0], winwidth(0))
+        redraw!
+        echo s:truncate('[' . event.message.room . '] ' . event.message.nickname . ' : ' . split(event.message.text, '\n')[0], winwidth(0) - 20)
         continue
       endif
       call s:cache(event.message, 1)
@@ -378,6 +377,14 @@ endfunction
 
 function! s:is_display_icon()
   return g:J6uil_display_icon && has('signs') && has('gui_running')
+endfunction
+
+function! s:truncate(message, width)
+  let message = a:message
+  while strwidth(message) > a:width
+    let message = message[0:len(message) - 2]
+  endwhile
+  return message
 endfunction
 
 let &cpo = s:save_cpo
