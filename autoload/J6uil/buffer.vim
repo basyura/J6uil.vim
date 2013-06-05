@@ -116,6 +116,7 @@ function! s:update(events)
   for event in  a:events
     if has_key(event, 'message')
       if event.message.room != s:current_room
+        echo event.message.room . ' - ' event.message.nickname . ' : ' . event.message.text
         continue
       endif
       call s:update_message(event.message, '$', 0)
