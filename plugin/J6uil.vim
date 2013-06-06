@@ -27,7 +27,7 @@ call s:set('J6uil_display_icon'      , 0)
 call s:set('J6uil_debug_mode'        , 0)
 call s:set('J6uil_updatetime'        , 1000)
 call s:set('J6uil_open_buffer_cmd'   , 'edit!')
-call s:set('J6uil_display_separator' , 0)
+call s:set('J6uil_display_separator' , 1)
 
 """"""""""""""""""""""""
 "       initialize     "
