@@ -128,9 +128,10 @@ function! J6uil#buffer#statusline()
   if status == ''
     let status = 'no updated message'
   endif
-  while len(status) < winwidth(0) - 4
-    let status = ' ' . status
-  endwhile
+  "while len(status) < winwidth(0) - 4
+    "let status = ' ' . status
+  "endwhile
+  let status = "%=" . status . ' '
   return status
 endfunction
 "
