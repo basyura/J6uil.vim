@@ -149,7 +149,7 @@ function! s:update(events)
         call s:update_message(event.message, '$', 0)
         let counter += 1
       endif
-      redraw!
+      "redraw!
       "echo J6uil#buffer#statusline()
     elseif has_key(event, 'presence')
       if event.presence.room != s:current_room
