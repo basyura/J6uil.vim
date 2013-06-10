@@ -28,6 +28,7 @@ call s:set('J6uil_debug_mode'        , 0)
 call s:set('J6uil_updatetime'        , 1000)
 call s:set('J6uil_open_buffer_cmd'   , 'edit!')
 call s:set('J6uil_display_separator' , 1)
+call s:set('J6uil_nickname_length'   , 12)
 
 """"""""""""""""""""""""
 "       initialize     "

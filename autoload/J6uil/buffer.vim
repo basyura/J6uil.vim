@@ -187,7 +187,7 @@ function! s:update_message(message, line_expr, cnt)
     let nickname = s:config().blank_nickname
   else
     let s:before_msg_user = nickname
-    let nickname = (s:is_display_icon() ?  ' ' : '') . s:ljust(nickname, 12) . (s:is_display_icon() ?  '' : ' ') . ' : '
+    let nickname = (s:is_display_icon() ?  ' ' : '') . s:ljust(nickname, g:J6uil_nickname_length) . (s:is_display_icon() ?  '' : ' ') . ' : '
   endif
 
   if getline(1) == ''
@@ -228,7 +228,7 @@ function! s:update_message(message, line_expr, cnt)
   endif
 
   for msg in list[1:]
-    call append(line(a:line_expr) + a:cnt, s:ljust('', 12) . '    ' . msg)
+    call append(line(a:line_expr) + a:cnt, s:ljust('', g:J6uil_nickname_length) . '    ' . msg)
   endfor
 
   return len(list) 
@@ -246,7 +246,7 @@ function! s:update_presence(presence)
   if !g:J6uil_insert_online  && a:presence.status == 'online'
     return
   endif
-  call append(line('$'), s:ljust('', 12) . '   ' . a:presence.text)
+  call append(line('$'), s:ljust('', g:J6uil_nickname_length) . '   ' . a:presence.text)
 endfunction
 "
 "
