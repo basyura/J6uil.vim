@@ -132,6 +132,7 @@ function! J6uil#buffer#statusline()
     "let status = ' ' . status
   "endwhile
   let status = "%=" . status . ' '
+  let status .= "%{printf('%5d/%d',line('.'),line('$'))}"
   return status
 endfunction
 "
