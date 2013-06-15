@@ -6,7 +6,7 @@ let s:Vital    = vital#of('J6uil')
 let s:DateTime = s:Vital.import('DateTime')
 
 let s:last_bufnr      = 0
-let s:current_room    = '' 
+let s:current_room    = ''
 let s:before_msg_user = ''
 
 " key : room, value : [message]
@@ -132,6 +132,7 @@ function! J6uil#buffer#statusline()
     "let status = ' ' . status
   "endwhile
   let status = "%=" . status . ' '
+  let status .= "%{printf('%5d/%d',line('.'),line('$'))}"
   return status
 endfunction
 "
@@ -200,7 +201,8 @@ function! s:update_message(message, line_expr, cnt)
   end
 
 
-  call append(line(a:line_expr) + a:cnt, nickname . list[0])
+  call append(line(a:line_expr) + a:cnt, nickname .
+        \ (g:J6uil_align_message ? list[0] : ''))
 
   if s:is_display_icon() && substitute(nickname, ' ', '', 'g') != ''
     let current_dir = getcwd()
@@ -227,11 +229,18 @@ function! s:update_message(message, line_expr, cnt)
     endtry
   endif
 
-  for msg in list[1:]
-    call append(line(a:line_expr) + a:cnt, s:ljust('', g:J6uil_nickname_length) . '    ' . msg)
-  endfor
+  if g:J6uil_align_message
+    for msg in list[1:]
+      call append(line(a:line_expr) + a:cnt,
+            \ s:ljust('', g:J6uil_nickname_length) . '    ' . msg)
+    endfor
+  else
+    for msg in list
+      call append(line(a:line_expr) + a:cnt, ' ' . msg)
+    endfor
+  endif
 
-  return len(list) 
+  return len(list)
 endfunction
 "
 "
@@ -307,7 +316,11 @@ function! s:buf_setting()
   setlocal nonu
   setlocal buftype=nofile
   hi Signcolumn guibg=bg
-  call s:define_default_key_mappings()
+
+  if !g:J6uil_no_default_keymappings
+    call s:define_default_key_mappings()
+  endif
+
   setfiletype J6uil
 
   if !exists('b:J6uil_saved_updatetime')
@@ -372,7 +385,7 @@ endfunction
 "
 "
 function! s:bufwidth()
-  let width = winwidth(0)
+  let width = winwidth(0) - &l:foldcolumn
   if &l:number || &l:relativenumber
     let width = width - (&numberwidth + 1)
   endif

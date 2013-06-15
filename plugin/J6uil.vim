@@ -29,6 +29,8 @@ call s:set('J6uil_updatetime'        , 1000)
 call s:set('J6uil_open_buffer_cmd'   , 'edit!')
 call s:set('J6uil_display_separator' , 1)
 call s:set('J6uil_nickname_length'   , 12)
+call s:set('J6uil_no_default_keymappings', 0)
+call s:set('J6uil_align_message', 1)
 
 """"""""""""""""""""""""
 "       initialize     "
@@ -42,11 +44,11 @@ endif
 "       commands       "
 """"""""""""""""""""""""
 
-command! -nargs=? J6uil :call s:start(<f-args>)
+command! -nargs=? J6uil call s:start(<f-args>)
 
-command! -nargs=0 J6uilReconnect  :call J6uil#reconnect()
+command! -nargs=0 J6uilReconnect  call J6uil#reconnect()
 
-command! -nargs=0 J6uilDisconnect :call J6uil#disconnect()
+command! -nargs=0 J6uilDisconnect call J6uil#disconnect()
 
 """"""""""""""""""""""""
 "       key maps       "
