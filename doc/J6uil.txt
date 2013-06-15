@@ -34,7 +34,7 @@ Requirement:
 	https://github.com/Shougo/vimproc
 
 	open-browser.vim
-	https://github.com/tyru/open-browser.vim)
+	https://github.com/tyru/open-browser.vim
 
 	unite.vim (*)
 	https://github.com/Shougo/unite.vim
