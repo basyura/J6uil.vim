@@ -6,7 +6,7 @@ let s:Vital    = vital#of('J6uil')
 let s:DateTime = s:Vital.import('DateTime')
 
 let s:last_bufnr      = 0
-let s:current_room    = '' 
+let s:current_room    = ''
 let s:before_msg_user = ''
 
 " key : room, value : [message]
@@ -231,7 +231,7 @@ function! s:update_message(message, line_expr, cnt)
     call append(line(a:line_expr) + a:cnt, s:ljust('', g:J6uil_nickname_length) . '    ' . msg)
   endfor
 
-  return len(list) 
+  return len(list)
 endfunction
 "
 "
@@ -372,7 +372,7 @@ endfunction
 "
 "
 function! s:bufwidth()
-  let width = winwidth(0)
+  let width = winwidth(0) - &l:foldcolumn
   if &l:number || &l:relativenumber
     let width = width - (&numberwidth + 1)
   endif
