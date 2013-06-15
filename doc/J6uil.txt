@@ -157,6 +157,10 @@ g:J6uil_display_icon                            *g:J6uil_display_icon*
 		directory.
 		default : 0
 
+g:J6uil_no_default_keymappings                  *g:J6uil_no_default_keymappings*
+		disable default keymappings.
+		default : 0
+
 ==============================================================================
 BUFFERES 					*J6uil-bufferes*
 

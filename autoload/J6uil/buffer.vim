@@ -308,7 +308,11 @@ function! s:buf_setting()
   setlocal nonu
   setlocal buftype=nofile
   hi Signcolumn guibg=bg
-  call s:define_default_key_mappings()
+
+  if !g:J6uil_no_default_keymappings
+    call s:define_default_key_mappings()
+  endif
+
   setfiletype J6uil
 
   if !exists('b:J6uil_saved_updatetime')
