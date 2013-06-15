@@ -3,7 +3,7 @@
 function! J6uil#say#open(room)
   let text  = a:0 > 0 ? a:1 : ''
   let param = a:0 > 1 ? a:2 : {}
-  
+
   let bufnr = bufwinnr('j6uil_say')
   if bufnr > 0
     exec bufnr.'wincmd w'
@@ -19,7 +19,7 @@ function! J6uil#say#open(room)
 
   startinsert!
 
-  setlocal nomodified
+  setlocal buftype=nofile
 endfunction
 
 function! s:define_default_settings_say()
