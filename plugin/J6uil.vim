@@ -30,6 +30,7 @@ call s:set('J6uil_open_buffer_cmd'   , 'edit!')
 call s:set('J6uil_display_separator' , 1)
 call s:set('J6uil_nickname_length'   , 12)
 call s:set('J6uil_no_default_keymappings', 0)
+call s:set('J6uil_align_message', 1)
 
 """"""""""""""""""""""""
 "       initialize     "

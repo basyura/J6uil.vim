@@ -201,7 +201,8 @@ function! s:update_message(message, line_expr, cnt)
   end
 
 
-  call append(line(a:line_expr) + a:cnt, nickname . list[0])
+  call append(line(a:line_expr) + a:cnt, nickname .
+        \ (g:J6uil_align_message ? list[0] : ''))
 
   if s:is_display_icon() && substitute(nickname, ' ', '', 'g') != ''
     let current_dir = getcwd()
@@ -228,9 +229,16 @@ function! s:update_message(message, line_expr, cnt)
     endtry
   endif
 
-  for msg in list[1:]
-    call append(line(a:line_expr) + a:cnt, s:ljust('', g:J6uil_nickname_length) . '    ' . msg)
-  endfor
+  if g:J6uil_align_message
+    for msg in list[1:]
+      call append(line(a:line_expr) + a:cnt,
+            \ s:ljust('', g:J6uil_nickname_length) . '    ' . msg)
+    endfor
+  else
+    for msg in list
+      call append(line(a:line_expr) + a:cnt, ' ' . msg)
+    endfor
+  endif
 
   return len(list)
 endfunction
