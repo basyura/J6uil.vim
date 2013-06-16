@@ -179,7 +179,7 @@ if you want to change keymap, write autocmd to .vimrc like this.
 >
 		augroup my-J6uil
 		  autocmd!
-		  autocmd FileType J6uil :call s:J6uil_settings()
+		  autocmd FileType J6uil call s:J6uil_settings()
 		augroup END
 
 		function! s:J6uil_settings()
