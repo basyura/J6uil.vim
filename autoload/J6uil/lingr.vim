@@ -107,6 +107,7 @@ function! s:lingr.get_archives(room, before)
         \ 'session' : self.session,
         \ 'room'    : a:room,
         \ 'before'  : a:before,
+        \ 'limit'   : 100,
         \ }).messages
   return ret
 endfunction
