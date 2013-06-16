@@ -16,6 +16,8 @@ syntax match J6uil_separator       "^-\+$"
 
 syntax match J6uil_quotation " : \zs>.*\ze"
 syntax match J6uil_quotation "^\s\+\zs>.*\ze"
+syntax match J6uil_quotation " : \zs＞.*\ze"
+syntax match J6uil_quotation "^\s\+\zs＞.*\ze"
 
 hi def link J6uil_appendix   Comment
 hi def link J6uil_link       Underlined
