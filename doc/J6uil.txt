@@ -165,6 +165,10 @@ g:J6uil_align_message                           *g:J6uil_align_message*
 		align message buffer by user nickname.
 		default : 1
 
+g:J6uil_empty_separator				*g:J6uil_empty_separator*
+		separate user by blank line.
+		default : 0
+
 ==============================================================================
 BUFFERES 					*J6uil-bufferes*
 

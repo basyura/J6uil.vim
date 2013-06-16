@@ -196,9 +196,11 @@ function! s:update_message(message, line_expr, cnt)
     let  b:J6uil_oldest_id = message.id
   end
 
-  if g:J6uil_display_separator && nickname != s:config().blank_nickname
-    call append(line(a:line_expr) + a:cnt, s:separator("-"))
-  end
+  if (g:J6uil_display_separator || g:J6uil_empty_separator) && nickname != s:config().blank_nickname
+    let separator = g:J6uil_empty_separator ? '' : s:separator("-")
+    call append(line(a:line_expr) + a:cnt, separator)
+  endif
+
 
 
   call append(line(a:line_expr) + a:cnt, nickname .
