@@ -14,8 +14,12 @@ syntax match J6uil_appendix_block /\]\]/ contained conceal
 syntax match J6uil_link "https\?://[0-9A-Za-z_#?~=\-+%\.\/:&!]\+"
 syntax match J6uil_separator       "^-\+$"
 
+syntax match J6uil_quotation " : \zs>.*\ze"
+syntax match J6uil_quotation "^\s\+\zs>.*\ze"
+
 hi def link J6uil_appendix   Comment
 hi def link J6uil_link       Underlined
 hi def link J6uil_separator  Ignore
+hi def link J6uil_quotation  Comment
 
 let b:current_syntax = 'J6uil'
