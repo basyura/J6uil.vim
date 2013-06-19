@@ -14,14 +14,19 @@ syntax match J6uil_appendix_block /\]\]/ contained conceal
 syntax match J6uil_link "https\?://[0-9A-Za-z_#?~=\-+%\.\/:&!]\+"
 syntax match J6uil_separator       "^-\+$"
 
-syntax match J6uil_quotation " : \zs>.*\ze"
-syntax match J6uil_quotation "^\s\+\zs>.*\ze"
-syntax match J6uil_quotation " : \zs＞.*\ze"
-syntax match J6uil_quotation "^\s\+\zs＞.*\ze"
+syntax region J6uil_sudden_death start="＿人人" end="ＹＹ￣" contains=J6uil_sudden_death
 
-hi def link J6uil_appendix   Comment
-hi def link J6uil_link       Underlined
-hi def link J6uil_separator  Ignore
-hi def link J6uil_quotation  Comment
+syntax match J6uil_quotation " : \zs>.*\ze\[\{-}" contains=J6uil_appendix
+syntax match J6uil_quotation "^\s\+\zs>.*\ze\[\{-}" contains=J6uil_appendix
+syntax match J6uil_quotation " : \zs＞.*\ze\[\{-}" contains=J6uil_appendix
+syntax match J6uil_quotation "^\s\+\zs＞.*\ze\[\{-}" contains=J6uil_appendix
+
+
+
+hi def link J6uil_appendix     Comment
+hi def link J6uil_link         Underlined
+hi def link J6uil_separator    Ignore
+hi def link J6uil_quotation    Comment
+hi def link J6uil_sudden_death Error
 
 let b:current_syntax = 'J6uil'
