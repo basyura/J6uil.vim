@@ -370,7 +370,7 @@ endfunction
 "
 function! s:cache_buffer()
   if exists(":NeoComplCacheCachingBuffer")
-    :NeoComplCacheCachingBuffer
+    ":NeoComplCacheCachingBuffer
   endif
 endfunction
 "
