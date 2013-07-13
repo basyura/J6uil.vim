@@ -181,7 +181,7 @@ function! s:update_message(message, line_expr, cnt)
   let list = split(message.text, '\n')
 
   let date_time = s:DateTime.from_format(message.timestamp . ' +0000', '%Y-%m-%dT%H:%M:%SZ %z', 'C')
-  let list[-1] = list[-1] . '  [[' . date_time.strftime("%m/%d %H:%M") . ']]'
+  let list[-1] = list[-1] . '  ' . date_time.strftime("%m/%d %H:%M")
 
   let nickname = message.nickname
   if nickname == s:before_msg_user || nickname == 'URL Info.'

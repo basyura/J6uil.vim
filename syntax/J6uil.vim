@@ -8,6 +8,7 @@ endif
 setlocal conceallevel=2
 setlocal concealcursor=nc
 
+syntax match J6uil_time " \d\d/\d\d \d\d:\d\d$" contains=J6uil_time
 syntax match J6uil_appendix "\[\[.\{-1,}\]\]" contains=J6uil_appendix_block
 syntax match J6uil_appendix_block /\[\[/ contained conceal
 syntax match J6uil_appendix_block /\]\]/ contained conceal
@@ -23,6 +24,7 @@ syntax match J6uil_quotation "^\s\+\zs＞.*\ze\[\{-}" contains=J6uil_appendix
 
 
 
+hi def link J6uil_time         Comment
 hi def link J6uil_appendix     Comment
 hi def link J6uil_link         Underlined
 hi def link J6uil_separator    Ignore
