@@ -180,6 +180,10 @@ function! s:update_message(message, line_expr, cnt)
   let message = a:message
   let list = split(message.text, '\n')
 
+  if empty(list)
+    return 0
+  endif
+
   let date_time = s:DateTime.from_format(message.timestamp . ' +0000', '%Y-%m-%dT%H:%M:%SZ %z', 'C')
   let list[-1] = list[-1] . '  ' . date_time.strftime("%m/%d %H:%M")
 
