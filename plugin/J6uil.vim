@@ -45,7 +45,7 @@ endif
 "       commands       "
 """"""""""""""""""""""""
 
-command! -nargs=? J6uil call s:start(<f-args>)
+command! -nargs=? -complete=custom,J6uil#complete#room J6uil call s:start(<f-args>)
 
 command! -nargs=0 J6uilReconnect  call J6uil#reconnect()
 
