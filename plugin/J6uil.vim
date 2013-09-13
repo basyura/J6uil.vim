@@ -19,19 +19,20 @@ endfunction
 """"""""""""""""""""""""
 "       variables      "
 """"""""""""""""""""""""
-call s:set('J6uil_config_dir'        , expand('~/.J6uil'))
-call s:set('J6uil_insert_offline'    , 0)
-call s:set('J6uil_insert_online'     , 0)
-call s:set('J6uil_echo_presence'     , 1)
-call s:set('J6uil_display_icon'      , 0)
-call s:set('J6uil_debug_mode'        , 0)
-call s:set('J6uil_updatetime'        , 1000)
-call s:set('J6uil_open_buffer_cmd'   , 'edit!')
-call s:set('J6uil_display_separator' , 1)
-call s:set('J6uil_empty_separator'   , 0)
-call s:set('J6uil_nickname_length'   , 12)
+call s:set('J6uil_config_dir'            , expand('~/.J6uil'))
+call s:set('J6uil_insert_offline'        , 0)
+call s:set('J6uil_insert_online'         , 0)
+call s:set('J6uil_echo_presence'         , 1)
+call s:set('J6uil_display_icon'          , 0)
+call s:set('J6uil_debug_mode'            , 0)
+call s:set('J6uil_updatetime'            , 1000)
+call s:set('J6uil_open_buffer_cmd'       , 'edit!')
+call s:set('J6uil_display_separator'     , 1)
+call s:set('J6uil_empty_separator'       , 0)
+call s:set('J6uil_nickname_length'       , 12)
 call s:set('J6uil_no_default_keymappings', 0)
-call s:set('J6uil_align_message', 1)
+call s:set('J6uil_align_message'         , 1)
+call s:set('J6uil_multi_window'          , 1)
 
 """"""""""""""""""""""""
 "       initialize     "

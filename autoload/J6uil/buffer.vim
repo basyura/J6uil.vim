@@ -291,7 +291,7 @@ function! s:switch_buffer()
   endwhile
   " buf is not exist
   if bufnr < 0
-    execute g:J6uil_open_buffer_cmd . ' ' . s:config().buf_name
+    silent! execute g:J6uil_open_buffer_cmd . ' ' . s:config().buf_name
     let s:last_bufnr = bufnr("")
     return
   endif
@@ -312,6 +312,7 @@ function! s:switch_buffer()
     execute 'split ' . s:config().buf_name
     let s:last_bufnr = bufnr("")
   endif
+
 endfunction
 "
 "

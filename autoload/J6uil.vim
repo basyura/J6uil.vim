@@ -44,13 +44,48 @@ function! J6uil#subscribe(room)
   endif
 
   let room = a:room
+  let rooms = J6uil#get_rooms()
   if room == ''
-    let rooms = J6uil#get_rooms()
     let room = rooms[0]
   end
 
-
   let status = s:lingr.room_show(room)
+
+  silent! only
+  silent! vsplit J6uil_members
+  silent! split  J6uil_rooms
+  "5 wincmd _
+  10 wincmd |
+  execute (len(rooms) + 2) . ' wincmd _'
+  setlocal modifiable
+  silent %delete _
+  " rooms
+  call append(0, rooms)
+  delete _
+  setlocal statusline=\ rooms
+  setlocal nomodified
+  setlocal nomodifiable
+  :0
+  " members
+  wincmd j
+  setlocal modifiable
+  silent %delete _
+  for member in reverse(status.roster.members)
+    let name  = member.is_online ? '+' : ' '
+    let name .= member.is_owner  ? '*' : ' '
+    let name .= member.name
+    call append(0, name)
+  endfor
+  delete _
+  setlocal statusline=\ members
+  setlocal nomodified
+  setlocal nomodifiable
+  :0
+
+  wincmd l
+
+
+
   call J6uil#buffer#switch(room, status)
 
   call s:observe_start(s:lingr)
