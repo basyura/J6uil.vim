@@ -89,7 +89,13 @@ function! J6uil#buffer#update(json)
 
   setlocal nomodified
   setlocal nomodifiable
+
+  redraw
+
+  call s:update_room_member_status()
+
 endfunction
+
 
 function! J6uil#buffer#append_message(message)
   call s:switch_buffer()
@@ -262,6 +268,31 @@ function! s:update_presence(presence)
     return
   endif
   call append(line('$'), s:ljust('', g:J6uil_nickname_length) . '   ' . a:presence.text)
+endfunction
+
+function! s:update_room_member_status()
+  wincmd h
+  " room
+  wincmd k
+  0
+  setlocal modifiable
+  let cnt = 1
+  %delete _
+  for room in b:J6uil_rooms
+    let mcnt = get(s:cache_count, room, 0)
+    if mcnt != 0
+      call append(line('.') - 1, room . ' (' . string(mcnt) . ')')
+    else
+      call append(line('.') - 1, room)
+    endif
+  endfor
+  delete _
+  " member
+  wincmd j
+  setlocal modifiable
+  " message
+  wincmd l
+  
 endfunction
 "
 "
