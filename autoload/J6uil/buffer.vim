@@ -275,21 +275,32 @@ function! s:update_room_member_status()
   " room
   wincmd k
   0
-  setlocal modifiable
-  let cnt = 1
-  %delete _
-  for room in b:J6uil_rooms
-    let mcnt = get(s:cache_count, room, 0)
-    if mcnt != 0
-      call append(line('.') - 1, room . ' (' . string(mcnt) . ')')
-    else
-      call append(line('.') - 1, room)
-    endif
-  endfor
-  delete _
+  if expand('%') == 'J6uil_rooms'
+    setlocal modifiable
+    silent %delete _
+    for room in b:J6uil_rooms
+      let mcnt = get(s:cache_count, room, 0)
+      if mcnt != 0
+        call append(line('.') - 1, room . ' (' . string(mcnt) . ')')
+      else
+        call append(line('.') - 1, room)
+      endif
+    endfor
+    delete _
+  endif
   " member
   wincmd j
-  setlocal modifiable
+  if expand('%') == 'J6uil_members'
+    setlocal modifiable
+    silent %delete _
+    for member in b:J6uil_members
+      let name  = member.is_online ? '+' : ' '
+      let name .= member.is_owner  ? '*' : ' '
+      let name .= member.name
+      call append(0, name)
+    endfor
+    delete _
+  endif
   " message
   wincmd l
   
