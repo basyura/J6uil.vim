@@ -13,6 +13,8 @@ let s:before_msg_user = ''
 let s:cache_message = {}
 let s:cache_count   = {}
 
+let s:cacheMgr = J6uil#cache_manager#new()
+
 function! s:config()
   return J6uil#config()
 endfunction
@@ -34,6 +36,7 @@ function! J6uil#buffer#switch(room, status)
 
   let b:J6uil_current_room = a:room
   let b:J6uil_roster = a:status.roster
+  call s:cacheMgr.cache_presence(a:room, a:status.roster.members)
 
   for message in a:status.messages
     call s:update_message(message, '$', 0)
@@ -92,7 +95,7 @@ function! J6uil#buffer#update(json)
 
   redraw
 
-  call s:update_room_member_status()
+  call s:update_status(json.events)
 
 endfunction
 
@@ -257,6 +260,9 @@ endfunction
 "
 "
 function! s:update_presence(presence)
+  " cache user status
+  call s:cacheMgr.cache_presence(a:presence.room, a:presence)
+
   if g:J6uil_echo_presence
     redraw!
     echo a:presence.text
@@ -270,7 +276,8 @@ function! s:update_presence(presence)
   call append(line('$'), s:ljust('', g:J6uil_nickname_length) . '   ' . a:presence.text)
 endfunction
 
-function! s:update_room_member_status()
+function! s:update_status(events)
+  let start = reltime()
   wincmd h
   " room
   wincmd k
@@ -293,7 +300,7 @@ function! s:update_room_member_status()
   if expand('%') == 'J6uil_members'
     setlocal modifiable
     silent %delete _
-    for member in b:J6uil_members
+    for member in sort(s:cacheMgr.get_members(s:current_room), 'J6uil#buffer#_member_sorter')
       let name  = member.is_online ? '+' : ' '
       let name .= member.is_owner  ? '*' : ' '
       let name .= member.name
@@ -304,6 +311,32 @@ function! s:update_room_member_status()
   " message
   wincmd l
   
+	echo split(reltimestr(reltime(start)))[0]
+endfunction
+
+function! J6uil#buffer#_member_sorter(i1, i2)
+  if a:i1.is_owner && a:i2.is_owner
+	  return a:i1.name == a:i2.name ? 0 : a:i1.name > a:i2.name ? 1 : -1
+  else
+    if a:i1.is_owner
+      return 1
+    elseif a:i2.is_owner
+      return -1
+    endif
+  endif
+
+  if a:i1.is_online && a:i2.is_online
+	  return a:i1.name == a:i2.name ? 0 : a:i1.name > a:i2.name ? 1 : -1
+  else
+    if a:i1.is_online
+      return 1
+    elseif a:i2.is_online
+      return -1
+    endif
+  endif
+
+
+	return a:i1.name == a:i2.name ? 0 : a:i1.name > a:i2.name ? 1 : -1
 endfunction
 "
 "
