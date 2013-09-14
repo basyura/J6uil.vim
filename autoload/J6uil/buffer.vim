@@ -11,7 +11,6 @@ let s:before_msg_user = ''
 
 " key : room, value : [message]
 let s:cache_message = {}
-let s:cache_count   = {}
 
 let s:cacheMgr = J6uil#cache_manager#new()
 
@@ -25,7 +24,6 @@ endfunction
 
 function! J6uil#buffer#switch(room, status)
   let s:current_room = a:room
-  let s:cache_count[a:room] = 0
   call s:switch_buffer()
   call s:buf_setting()
 
@@ -131,10 +129,10 @@ endfunction
 "
 function! J6uil#buffer#statusline()
   let status = ''
-  for key in keys(s:cache_count)
-    let cnt = s:cache_count[key]
+  for cache in keys(s:cacheMgr.get_cache())
+    let cnt = cache.unread_count
     if cnt > 0
-      let status .= key . '(' . string(cnt) . ') '
+      let status .= cache.room . '(' . string(cnt) . ') '
     endif
   endfor
   if status == ''
@@ -288,7 +286,7 @@ function! s:update_status()
     setlocal modifiable
     silent %delete _
     for room in b:J6uil_rooms
-      let mcnt = get(s:cache_count, room, 0)
+      let mcnt = s:cacheMgr.get_unread_count(room)
       if mcnt != 0
         call append(line('.') - 1, room . ' (' . string(mcnt) . ')')
       else
@@ -350,13 +348,10 @@ endfunction
 "
 function! s:cache(message, is_read)
   let message = a:message
-  if !has_key(s:cache_message, message.room)
-    let s:cache_message[message.room] = []
-    let s:cache_count[message.room]    = 0
-  end
-  call add(s:cache_message[message.room], message)
+  "call add(s:cache_message[message.room], message)
+
   if !a:is_read
-    let s:cache_count[message.room] += 1
+    call s:cacheMgr.count_up_unread(message.room)
   endif
 endfunction
 "

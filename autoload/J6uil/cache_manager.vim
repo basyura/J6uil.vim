@@ -1,4 +1,5 @@
-
+"
+"
 function! J6uil#cache_manager#new()
   return deepcopy(s:cache_manager)
 endfunction
@@ -8,10 +9,37 @@ let s:cache_manager = {
       \  }
 
 let s:cache = {
-      \  'messages' : [],
-      \  'members'  : [],
+      \  'room'         : '',
+      \  'messages'     : [],
+      \  'members'      : [],
+      \  'unread_count' : 0,
       \ }
 
+"
+"
+function! s:cache_manager.get_cache(...)
+  if a:0
+    return self.get_cache(a:1)
+  endif
+
+  retur values(self._cache)
+  
+endfunction
+
+"
+"
+function! s:cache_manager.get_unread_count(room)
+  return self._get_cache(a:room).unread_count
+endfunction
+
+"
+"
+function! s:cache_manager.count_up_unread(room)
+  let cache = self._get_cache(a:room)
+  let cache.unread_count += 1
+endfunction
+"
+"
 function! s:cache_manager.cache_presence(room, presences)
 
   if type(a:presences) != 3
@@ -43,24 +71,22 @@ function! s:cache_manager.cache_presence(room, presences)
   endfor
 endfunction
 
+"
+"
 function! s:cache_manager.get_members(room)
   return self._get_cache(a:room).members
 endfunction
 
+"
+"
 function! s:cache_manager._get_cache(room)
 
-  "if type(a:key) == 1
-    "let room = a:key
-  "elseif has_key(a:key, 'room')
-    "let room = a:key.room
-  "else
-    "let room = has_key(a:key, 'message') ? a:key.message.room : a:key.presence.room
-  "endif
-  "
   let room = a:room
 
   if !has_key(self._cache, room)
-    let self._cache[room] = deepcopy(s:cache)
+    let copied = deepcopy(s:cache)
+    let copied.room = room
+    let self._cache[room] = copied
   endif
 
   return self._cache[room]
