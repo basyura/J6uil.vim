@@ -43,7 +43,7 @@ function! J6uil#subscribe(room)
     call s:lingr.verify_and_relogin()
   endif
 
-  let room = a:room
+  let room  = a:room
   let rooms = J6uil#get_rooms()
   if room == ''
     let room = rooms[0]
@@ -51,9 +51,35 @@ function! J6uil#subscribe(room)
 
   let status = s:lingr.room_show(room)
 
+  call s:layout(rooms)
+  call J6uil#buffer#switch(room, status)
+  call s:observe_start(s:lingr)
+endfunction
+
+"
+"
+function! s:layout(rooms)
+  if !g:J6uil_multi_window
+    return
+  endif
+
+  let rooms = a:rooms
+
   silent! only
+
   silent! vsplit J6uil_members
+  setlocal noswapfile
+  setlocal nolist
+  setlocal nonu
+  setlocal buftype=nofile
+  setfiletype J6uil_members
+
   silent! split  J6uil_rooms
+  setlocal noswapfile
+  setlocal nolist
+  setlocal nonu
+  setlocal buftype=nofile
+  setfiletype J6uil_rooms
   "5 wincmd _
   10 wincmd |
   execute (len(rooms) + 2) . ' wincmd _'
@@ -66,32 +92,8 @@ function! J6uil#subscribe(room)
   setlocal statusline=\ rooms
   setlocal nomodified
   setlocal nomodifiable
-  ":0
-  "" members
-  "wincmd j
-  "setlocal modifiable
-  "silent %delete _
-  "let b:J6uil_members = []
-  "for member in reverse(status.roster.members)
-    "let name  = member.is_online ? '+' : ' '
-    "let name .= member.is_owner  ? '*' : ' '
-    "let name .= member.name
-    "call append(0, name)
-    "call add(b:J6uil_members, member)
-  "endfor
-  "delete _
-  "setlocal statusline=\ members
-  "setlocal nomodified
-  "setlocal nomodifiable
-  ":0
 
   wincmd l
-
-
-
-  call J6uil#buffer#switch(room, status)
-
-  call s:observe_start(s:lingr)
 endfunction
 
 
