@@ -66,24 +66,24 @@ function! J6uil#subscribe(room)
   setlocal statusline=\ rooms
   setlocal nomodified
   setlocal nomodifiable
-  :0
-  " members
-  wincmd j
-  setlocal modifiable
-  silent %delete _
-  let b:J6uil_members = []
-  for member in reverse(status.roster.members)
-    let name  = member.is_online ? '+' : ' '
-    let name .= member.is_owner  ? '*' : ' '
-    let name .= member.name
-    call append(0, name)
-    call add(b:J6uil_members, member)
-  endfor
-  delete _
-  setlocal statusline=\ members
-  setlocal nomodified
-  setlocal nomodifiable
-  :0
+  ":0
+  "" members
+  "wincmd j
+  "setlocal modifiable
+  "silent %delete _
+  "let b:J6uil_members = []
+  "for member in reverse(status.roster.members)
+    "let name  = member.is_online ? '+' : ' '
+    "let name .= member.is_owner  ? '*' : ' '
+    "let name .= member.name
+    "call append(0, name)
+    "call add(b:J6uil_members, member)
+  "endfor
+  "delete _
+  "setlocal statusline=\ members
+  "setlocal nomodified
+  "setlocal nomodifiable
+  ":0
 
   wincmd l
 

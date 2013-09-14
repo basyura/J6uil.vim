@@ -20,8 +20,6 @@ function! s:cache_manager.cache_presence(room, presences)
     let presences = a:presences
   endif
 
-  echomsg 'cache presences : ' . a:room
-
   for presence in presences
     let cache = self._get_cache(a:room)
 
@@ -40,7 +38,6 @@ function! s:cache_manager.cache_presence(room, presences)
       endif
     endfor
     if !flg
-      echomsg 'added ' . ev.name
       call add(cache.members, ev)
     end
   endfor

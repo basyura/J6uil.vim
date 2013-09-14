@@ -37,6 +37,7 @@ function! J6uil#buffer#switch(room, status)
   let b:J6uil_current_room = a:room
   let b:J6uil_roster = a:status.roster
   call s:cacheMgr.cache_presence(a:room, a:status.roster.members)
+  call s:update_status()
 
   for message in a:status.messages
     call s:update_message(message, '$', 0)
@@ -95,7 +96,7 @@ function! J6uil#buffer#update(json)
 
   redraw
 
-  call s:update_status(json.events)
+  call s:update_status()
 
 endfunction
 
@@ -276,8 +277,7 @@ function! s:update_presence(presence)
   call append(line('$'), s:ljust('', g:J6uil_nickname_length) . '   ' . a:presence.text)
 endfunction
 
-function! s:update_status(events)
-  let start = reltime()
+function! s:update_status()
   wincmd h
   " room
   wincmd k
@@ -294,10 +294,14 @@ function! s:update_status(events)
       endif
     endfor
     delete _
+    0
+    setlocal nomodified
+    setlocal nomodifiable
   endif
   " member
   wincmd j
   if expand('%') == 'J6uil_members'
+    0
     setlocal modifiable
     silent %delete _
     for member in sort(s:cacheMgr.get_members(s:current_room), 'J6uil#buffer#_member_sorter')
@@ -307,11 +311,13 @@ function! s:update_status(events)
       call append(0, name)
     endfor
     delete _
+    setlocal nomodified
+    setlocal nomodifiable
+    0
   endif
   " message
   wincmd l
   
-	echo split(reltimestr(reltime(start)))[0]
 endfunction
 
 function! J6uil#buffer#_member_sorter(i1, i2)
