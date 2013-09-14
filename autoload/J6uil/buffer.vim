@@ -9,9 +9,6 @@ let s:last_bufnr      = 0
 let s:current_room    = ''
 let s:before_msg_user = ''
 
-" key : room, value : [message]
-let s:cache_message = {}
-
 let s:cacheMgr = J6uil#cache_manager#new()
 
 function! s:config()
@@ -90,7 +87,6 @@ function! J6uil#buffer#switch(room, status)
   execute "normal! G"
   setlocal nomodified
   setlocal nomodifiable
-  call s:cache_buffer()
 
   redraw!
 endfunction
@@ -212,10 +208,7 @@ function! s:update(events)
       call s:update_presence(event.presence)
     endif
   endfor
-  " cache for say buffer
-  if counter > 0
-    call s:cache_buffer()
-  endif
+
   return counter
 endfunction
 "
@@ -391,7 +384,6 @@ endfunction
 "
 function! s:cache(message, is_read)
   let message = a:message
-  "call add(s:cache_message[message.room], message)
 
   if !a:is_read
     call s:cacheMgr.count_up_unread(message.room)
@@ -492,13 +484,7 @@ function! s:ljust(str, size, ...)
   endwhile
   return str
 endfunction
-"
-"
-function! s:cache_buffer()
-  if exists(":NeoComplCacheCachingBuffer")
-    ":NeoComplCacheCachingBuffer
-  endif
-endfunction
+
 "
 "
 function! s:separator(s)
