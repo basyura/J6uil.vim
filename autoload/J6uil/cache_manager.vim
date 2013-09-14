@@ -6,6 +6,7 @@ endfunction
 
 let s:cache_manager = {
       \  '_cache' : {},
+      \  'rooms'  : [],
       \  }
 
 let s:cache = {

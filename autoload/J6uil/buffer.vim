@@ -22,6 +22,49 @@ function! J6uil#buffer#current_room()
   return s:current_room
 endfunction
 
+"
+"
+function! J6uil#buffer#layout(rooms)
+
+  let s:cacheMgr.rooms = a:rooms
+
+  if !g:J6uil_multi_window
+    return
+  endif
+
+  let rooms = a:rooms
+
+  silent! only
+
+  silent! vsplit J6uil_members
+  setlocal noswapfile
+  setlocal nolist
+  setlocal nonu
+  setlocal buftype=nofile
+  setfiletype J6uil_members
+
+  silent! split  J6uil_rooms
+  setlocal noswapfile
+  setlocal nolist
+  setlocal nonu
+  setlocal buftype=nofile
+  setfiletype J6uil_rooms
+  "5 wincmd _
+  10 wincmd |
+  execute (len(rooms) + 2) . ' wincmd _'
+  setlocal modifiable
+  silent %delete _
+  " rooms
+  call append(0, rooms)
+  delete _
+  setlocal statusline=\ rooms
+  setlocal nomodified
+  setlocal nomodifiable
+
+  wincmd l
+endfunction
+
+
 function! J6uil#buffer#switch(room, status)
   let s:current_room = a:room
   call s:switch_buffer()
@@ -285,7 +328,7 @@ function! s:update_status()
   if expand('%') == 'J6uil_rooms'
     setlocal modifiable
     silent %delete _
-    for room in b:J6uil_rooms
+    for room in s:cacheMgr.rooms
       let mcnt = s:cacheMgr.get_unread_count(room)
       if mcnt != 0
         call append(line('.') - 1, room . ' (' . string(mcnt) . ')')

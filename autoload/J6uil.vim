@@ -21,24 +21,9 @@ function! J6uil#subscribe(room)
   augroup END
 
   if !exists('s:lingr')
-    try
-      let user = exists('g:J6uil_user')     ? g:J6uil_user     : exists('g:lingr_vim_user')     ? g:lingr_vim_user     : input('user : ')
-      let pass = exists('g:J6uil_password') ? g:J6uil_password : exists('g:lingr_vim_password') ? g:lingr_vim_password : inputsecret('password : ')
-    catch
-      echohl Error
-      echo 'you must define g:J6uil_user or g:lingr_vim_user'
-      echo '                g:J6uil_password or g:lingr_vim_password'
-      echohl None
+    if !s:new_lingr()
       return
-    endtry
-    try
-      let s:lingr = J6uil#lingr#new(user, pass)
-    catch
-      call J6uil#disconnect()
-      redraw
-      echohl Error | echo "failed to login \n" . v:exception | echohl None
-      return
-    endtry
+    endif
   else
     call s:lingr.verify_and_relogin()
   endif
@@ -51,52 +36,13 @@ function! J6uil#subscribe(room)
 
   let status = s:lingr.room_show(room)
 
-  call s:layout(rooms)
+  call J6uil#buffer#layout(rooms)
   call J6uil#buffer#switch(room, status)
   call s:observe_start(s:lingr)
 endfunction
 
 "
 "
-function! s:layout(rooms)
-  if !g:J6uil_multi_window
-    return
-  endif
-
-  let rooms = a:rooms
-
-  silent! only
-
-  silent! vsplit J6uil_members
-  setlocal noswapfile
-  setlocal nolist
-  setlocal nonu
-  setlocal buftype=nofile
-  setfiletype J6uil_members
-
-  silent! split  J6uil_rooms
-  setlocal noswapfile
-  setlocal nolist
-  setlocal nonu
-  setlocal buftype=nofile
-  setfiletype J6uil_rooms
-  "5 wincmd _
-  10 wincmd |
-  execute (len(rooms) + 2) . ' wincmd _'
-  setlocal modifiable
-  silent %delete _
-  " rooms
-  call append(0, rooms)
-  delete _
-  let b:J6uil_rooms = rooms
-  setlocal statusline=\ rooms
-  setlocal nomodified
-  setlocal nomodifiable
-
-  wincmd l
-endfunction
-
-
 function! J6uil#reconnect()
   let room = J6uil#buffer#current_room()
   if room == ''
@@ -185,6 +131,31 @@ endfunction
 
 function! J6uil#say(room, message)
   return s:lingr.say(a:room, a:message)
+endfunction
+
+"
+"
+function! s:new_lingr()
+  try
+    let user = exists('g:J6uil_user')     ? g:J6uil_user     : exists('g:lingr_vim_user')     ? g:lingr_vim_user     : input('user : ')
+    let pass = exists('g:J6uil_password') ? g:J6uil_password : exists('g:lingr_vim_password') ? g:lingr_vim_password : inputsecret('password : ')
+  catch
+    echohl Error
+    echo 'you must define g:J6uil_user or g:lingr_vim_user'
+    echo '                g:J6uil_password or g:lingr_vim_password'
+    echohl None
+    return 0
+  endtry
+  try
+    let s:lingr = J6uil#lingr#new(user, pass)
+  catch
+    call J6uil#disconnect()
+    redraw
+    echohl Error | echo "failed to login \n" . v:exception | echohl None
+    return 0
+  endtry
+
+  return 1
 endfunction
 
 function! s:check_connection()
