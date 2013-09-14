@@ -50,6 +50,8 @@ function! J6uil#buffer#switch(room, status)
   setlocal nomodified
   setlocal nomodifiable
   call s:cache_buffer()
+
+  redraw!
 endfunction
 
 let s:que = []
@@ -322,7 +324,7 @@ endfunction
 
 function! J6uil#buffer#_member_sorter(i1, i2)
   if a:i1.is_owner && a:i2.is_owner
-	  return a:i1.name == a:i2.name ? 0 : a:i1.name > a:i2.name ? 1 : -1
+	  return a:i1.name == a:i2.name ? 0 : a:i1.name > a:i2.name ? -1 : 1
   else
     if a:i1.is_owner
       return 1
@@ -332,7 +334,7 @@ function! J6uil#buffer#_member_sorter(i1, i2)
   endif
 
   if a:i1.is_online && a:i2.is_online
-	  return a:i1.name == a:i2.name ? 0 : a:i1.name > a:i2.name ? 1 : -1
+	  return a:i1.name == a:i2.name ? 0 : a:i1.name > a:i2.name ? -1 : 1
   else
     if a:i1.is_online
       return 1
@@ -342,7 +344,7 @@ function! J6uil#buffer#_member_sorter(i1, i2)
   endif
 
 
-	return a:i1.name == a:i2.name ? 0 : a:i1.name > a:i2.name ? 1 : -1
+	return a:i1.name == a:i2.name ? 0 : a:i1.name > a:i2.name ? -1 : 1
 endfunction
 "
 "
