@@ -169,6 +169,9 @@ g:J6uil_empty_separator				*g:J6uil_empty_separator*
 		separate user by blank line.
 		default : 0
 
+g:J6uil_multi_window				*g:J6uil_multi_window*
+		display room and user status.
+		default : 0
 ==============================================================================
 BUFFERES 					*J6uil-bufferes*
 

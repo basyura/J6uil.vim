@@ -3,6 +3,10 @@ J6uil.vim
 
 yet another lingr.vim
 
+![img](http://cdn-ak.f.st-hatena.com/images/fotolife/b/basyura/20130915/20130915114947.png)
+
+![img](http://cdn-ak.f.st-hatena.com/images/fotolife/b/basyura/20130915/20130915114946.png)
+
 License
 -------
 
@@ -31,6 +35,7 @@ Settings
     let g:J6uil_display_icon     = 0
     let g:J6uil_display_interval = 0
     let g:J6uil_updatetime       = 1000
+    let g:J6uil_multi_window     = 0
 
 Usage
 -----
