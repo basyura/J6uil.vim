@@ -52,12 +52,12 @@ function! J6uil#buffer#layout(rooms)
 
   10 wincmd |
   execute (len(rooms) + 2) . ' wincmd _'
-  setlocal modifiable
-  silent %delete _
-  call append(0, rooms)
-  delete _
-  setlocal nomodified
-  setlocal nomodifiable
+  "setlocal modifiable
+  "silent %delete _
+  "call append(0, rooms)
+  "delete _
+  "setlocal nomodified
+  "setlocal nomodifiable
 
   " to message window
   wincmd l
@@ -324,11 +324,12 @@ function! s:update_status()
     setlocal modifiable
     silent %delete _
     for room in s:cacheMgr.rooms
+      let mark = room == s:cacheMgr.current_room() ? '* ' : '  '
       let mcnt = s:cacheMgr.get_unread_count(room)
       if mcnt != 0
-        call append(line('.') - 1, room . ' (' . string(mcnt) . ')')
+        call append(line('.') - 1, mark . room . ' (' . string(mcnt) . ')')
       else
-        call append(line('.') - 1, room)
+        call append(line('.') - 1, mark . room)
       endif
     endfor
     delete _
