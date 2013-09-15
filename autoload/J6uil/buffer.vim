@@ -6,7 +6,6 @@ let s:Vital    = vital#of('J6uil')
 let s:DateTime = s:Vital.import('DateTime')
 
 let s:last_bufnr      = 0
-let s:current_room    = ''
 let s:before_msg_user = ''
 
 let s:cacheMgr = J6uil#cache_manager#new()
@@ -16,7 +15,7 @@ function! s:config()
 endfunction
 
 function! J6uil#buffer#current_room()
-  return s:current_room
+  return s:cacheMgr.current_room()
 endfunction
 
 "
@@ -33,37 +32,40 @@ function! J6uil#buffer#layout(rooms)
 
   silent! only
 
+  " members
   silent! vsplit J6uil_members
   setlocal noswapfile
   setlocal nolist
   setlocal nonu
   setlocal buftype=nofile
   setfiletype J6uil_members
+  setlocal statusline=\ members
 
+  " rooms
   silent! split  J6uil_rooms
   setlocal noswapfile
   setlocal nolist
   setlocal nonu
   setlocal buftype=nofile
   setfiletype J6uil_rooms
-  "5 wincmd _
+  setlocal statusline=\ rooms
+
   10 wincmd |
   execute (len(rooms) + 2) . ' wincmd _'
   setlocal modifiable
   silent %delete _
-  " rooms
   call append(0, rooms)
   delete _
-  setlocal statusline=\ rooms
   setlocal nomodified
   setlocal nomodifiable
 
+  " to message window
   wincmd l
 endfunction
 
 
 function! J6uil#buffer#switch(room, status)
-  let s:current_room = a:room
+  call s:cacheMgr.current_room(a:room)
   call s:switch_buffer()
   call s:buf_setting()
 
@@ -168,7 +170,7 @@ endfunction
 "
 function! J6uil#buffer#statusline()
   let status = ''
-  for cache in keys(s:cacheMgr.get_cache())
+  for cache in s:cacheMgr.get_cache()
     let cnt = cache.unread_count
     if cnt > 0
       let status .= cache.room . '(' . string(cnt) . ') '
@@ -190,7 +192,7 @@ function! s:update(events)
   let counter = 0
   for event in  a:events
     if has_key(event, 'message')
-      if event.message.room != s:current_room
+      if event.message.room != s:cacheMgr.current_room()
         call s:cache(event.message, 0)
         "echo s:truncate('[' . event.message.room . '] ' . event.message.nickname . ' : ' . split(event.message.text, '\n')[0], winwidth(0) - 20)
         "
@@ -202,7 +204,7 @@ function! s:update(events)
       "redraw!
       "echo J6uil#buffer#statusline()
     elseif has_key(event, 'presence')
-      if event.presence.room != s:current_room
+      if event.presence.room != s:cacheMgr.current_room()
         continue
       endif
       call s:update_presence(event.presence)
@@ -340,7 +342,7 @@ function! s:update_status()
     0
     setlocal modifiable
     silent %delete _
-    for member in sort(s:cacheMgr.get_members(s:current_room), 'J6uil#buffer#_member_sorter')
+    for member in sort(s:cacheMgr.get_members(s:cacheMgr.current_room()), 'J6uil#buffer#_member_sorter')
       let name  = member.is_online ? '+' : ' '
       let name .= member.is_owner  ? '*' : ' '
       let name .= member.name

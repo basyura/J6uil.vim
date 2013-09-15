@@ -5,8 +5,9 @@ function! J6uil#cache_manager#new()
 endfunction
 
 let s:cache_manager = {
-      \  '_cache' : {},
-      \  'rooms'  : [],
+      \  '_cache'        : {},
+      \  'rooms'         : [],
+      \  '_current_room' : '',
       \  }
 
 let s:cache = {
@@ -16,6 +17,14 @@ let s:cache = {
       \  'unread_count' : 0,
       \ }
 
+function! s:cache_manager.current_room(...)
+  if a:0
+    let self._current_room = a:1
+    let cache = self._get_cache(a:1)
+    let cache.unread_count = 0
+  end
+  return self._current_room
+endfunction
 "
 "
 function! s:cache_manager.get_cache(...)
