@@ -6,34 +6,68 @@ let s:Vital    = vital#of('J6uil')
 let s:DateTime = s:Vital.import('DateTime')
 
 let s:last_bufnr      = 0
-let s:current_room    = ''
 let s:before_msg_user = ''
 
-" key : room, value : [message]
-let s:cache_message = {}
-let s:cache_count   = {}
+let s:cacheMgr = J6uil#cache_manager#new()
 
 function! s:config()
   return J6uil#config()
 endfunction
 
 function! J6uil#buffer#current_room()
-  return s:current_room
+  return s:cacheMgr.current_room()
 endfunction
 
+"
+"
+function! J6uil#buffer#layout(rooms)
+
+  let s:cacheMgr.rooms = a:rooms
+
+  if !g:J6uil_multi_window
+    return
+  endif
+
+  let rooms = a:rooms
+
+  silent! only
+
+  " members
+  silent! vsplit J6uil_members
+  setlocal noswapfile
+  setlocal nolist
+  setlocal nonu
+  setlocal buftype=nofile
+  setlocal statusline=\ members
+  setfiletype J6uil_members
+
+  " rooms
+  silent! split  J6uil_rooms
+  setlocal noswapfile
+  setlocal nolist
+  setlocal nonu
+  setlocal buftype=nofile
+  setlocal statusline=\ rooms
+  setfiletype J6uil_rooms
+
+  10 wincmd |
+  execute (len(rooms) + 2) . ' wincmd _'
+  wincmd l
+endfunction
+
+
 function! J6uil#buffer#switch(room, status)
-  let s:current_room = a:room
-  let s:cache_count[a:room] = 0
+  call s:cacheMgr.current_room(a:room)
   call s:switch_buffer()
   call s:buf_setting()
 
   execute "sign unplace * buffer=" . bufnr("%")
-"  if !exists('b:J6uil_current_room') || b:J6uil_current_room != a:room
-    silent %delete _
-"  endif
+  silent %delete _
 
   let b:J6uil_current_room = a:room
   let b:J6uil_roster = a:status.roster
+  call s:cacheMgr.cache_presence(a:room, a:status.roster.members)
+  call s:update_status()
 
   for message in a:status.messages
     call s:update_message(message, '$', 0)
@@ -45,7 +79,8 @@ function! J6uil#buffer#switch(room, status)
   execute "normal! G"
   setlocal nomodified
   setlocal nomodifiable
-  call s:cache_buffer()
+
+  redraw!
 endfunction
 
 let s:que = []
@@ -89,7 +124,13 @@ function! J6uil#buffer#update(json)
 
   setlocal nomodified
   setlocal nomodifiable
+
+  redraw
+
+  call s:update_status()
+
 endfunction
+
 
 function! J6uil#buffer#append_message(message)
   call s:switch_buffer()
@@ -119,10 +160,10 @@ endfunction
 "
 function! J6uil#buffer#statusline()
   let status = ''
-  for key in keys(s:cache_count)
-    let cnt = s:cache_count[key]
+  for cache in s:cacheMgr.get_cache()
+    let cnt = cache.unread_count
     if cnt > 0
-      let status .= key . '(' . string(cnt) . ') '
+      let status .= cache.room . '(' . string(cnt) . ') '
     endif
   endfor
   if status == ''
@@ -141,7 +182,7 @@ function! s:update(events)
   let counter = 0
   for event in  a:events
     if has_key(event, 'message')
-      if event.message.room != s:current_room
+      if event.message.room != s:cacheMgr.current_room()
         call s:cache(event.message, 0)
         "echo s:truncate('[' . event.message.room . '] ' . event.message.nickname . ' : ' . split(event.message.text, '\n')[0], winwidth(0) - 20)
         "
@@ -153,16 +194,13 @@ function! s:update(events)
       "redraw!
       "echo J6uil#buffer#statusline()
     elseif has_key(event, 'presence')
-      if event.presence.room != s:current_room
+      if event.presence.room != s:cacheMgr.current_room()
         continue
       endif
       call s:update_presence(event.presence)
     endif
   endfor
-  " cache for say buffer
-  if counter > 0
-    call s:cache_buffer()
-  endif
+
   return counter
 endfunction
 "
@@ -251,6 +289,9 @@ endfunction
 "
 "
 function! s:update_presence(presence)
+  " cache user status
+  call s:cacheMgr.cache_presence(a:presence.room, a:presence)
+
   if g:J6uil_echo_presence
     redraw!
     echo a:presence.text
@@ -263,17 +304,86 @@ function! s:update_presence(presence)
   endif
   call append(line('$'), s:ljust('', g:J6uil_nickname_length) . '   ' . a:presence.text)
 endfunction
+
+function! s:update_status()
+  if !g:J6uil_multi_window
+    return
+  endif
+
+  wincmd h
+  " room
+  wincmd k
+  0
+  if expand('%') == 'J6uil_rooms'
+    setlocal modifiable
+    silent %delete _
+    for room in s:cacheMgr.rooms
+      let mark = room == s:cacheMgr.current_room() ? '* ' : '  '
+      let mcnt = s:cacheMgr.get_unread_count(room)
+      if mcnt != 0
+        call append(line('.') - 1, mark . room . ' (' . string(mcnt) . ')')
+      else
+        call append(line('.') - 1, mark . room)
+      endif
+    endfor
+    delete _
+    0
+    setlocal nomodified
+    setlocal nomodifiable
+  endif
+  " member
+  wincmd j
+  if expand('%') == 'J6uil_members'
+    0
+    setlocal modifiable
+    silent %delete _
+    for member in sort(s:cacheMgr.get_members(s:cacheMgr.current_room()), 'J6uil#buffer#_member_sorter')
+      let name  = member.is_online ? '+' : ' '
+      let name .= member.is_owner  ? '*' : ' '
+      let name .= member.name
+      call append(0, name)
+    endfor
+    delete _
+    setlocal nomodified
+    setlocal nomodifiable
+    0
+  endif
+  " message
+  wincmd l
+  
+endfunction
+
+function! J6uil#buffer#_member_sorter(i1, i2)
+  if a:i1.is_owner && a:i2.is_owner
+	  return a:i1.name == a:i2.name ? 0 : a:i1.name > a:i2.name ? -1 : 1
+  else
+    if a:i1.is_owner
+      return 1
+    elseif a:i2.is_owner
+      return -1
+    endif
+  endif
+
+  if a:i1.is_online && a:i2.is_online
+	  return a:i1.name == a:i2.name ? 0 : a:i1.name > a:i2.name ? -1 : 1
+  else
+    if a:i1.is_online
+      return 1
+    elseif a:i2.is_online
+      return -1
+    endif
+  endif
+
+
+	return a:i1.name == a:i2.name ? 0 : a:i1.name > a:i2.name ? -1 : 1
+endfunction
 "
 "
 function! s:cache(message, is_read)
   let message = a:message
-  if !has_key(s:cache_message, message.room)
-    let s:cache_message[message.room] = []
-    let s:cache_count[message.room]    = 0
-  end
-  call add(s:cache_message[message.room], message)
+
   if !a:is_read
-    let s:cache_count[message.room] += 1
+    call s:cacheMgr.count_up_unread(message.room)
   endif
 endfunction
 "
@@ -291,7 +401,7 @@ function! s:switch_buffer()
   endwhile
   " buf is not exist
   if bufnr < 0
-    execute g:J6uil_open_buffer_cmd . ' ' . s:config().buf_name
+    silent! execute g:J6uil_open_buffer_cmd . ' ' . s:config().buf_name
     let s:last_bufnr = bufnr("")
     return
   endif
@@ -312,6 +422,7 @@ function! s:switch_buffer()
     execute 'split ' . s:config().buf_name
     let s:last_bufnr = bufnr("")
   endif
+
 endfunction
 "
 "
@@ -370,13 +481,7 @@ function! s:ljust(str, size, ...)
   endwhile
   return str
 endfunction
-"
-"
-function! s:cache_buffer()
-  if exists(":NeoComplCacheCachingBuffer")
-    ":NeoComplCacheCachingBuffer
-  endif
-endfunction
+
 "
 "
 function! s:separator(s)

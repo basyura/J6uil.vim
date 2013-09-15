@@ -21,42 +21,30 @@ function! J6uil#subscribe(room)
   augroup END
 
   if !exists('s:lingr')
-    try
-      let user = exists('g:J6uil_user')     ? g:J6uil_user     : exists('g:lingr_vim_user')     ? g:lingr_vim_user     : input('user : ')
-      let pass = exists('g:J6uil_password') ? g:J6uil_password : exists('g:lingr_vim_password') ? g:lingr_vim_password : inputsecret('password : ')
-    catch
-      echohl Error
-      echo 'you must define g:J6uil_user or g:lingr_vim_user'
-      echo '                g:J6uil_password or g:lingr_vim_password'
-      echohl None
+    if !s:new_lingr()
       return
-    endtry
-    try
-      let s:lingr = J6uil#lingr#new(user, pass)
-    catch
-      call J6uil#disconnect()
-      redraw
-      echohl Error | echo "failed to login \n" . v:exception | echohl None
-      return
-    endtry
+    endif
   else
     call s:lingr.verify_and_relogin()
   endif
 
-  let room = a:room
+  let room  = a:room
+  let rooms = J6uil#get_rooms()
   if room == ''
-    let rooms = J6uil#get_rooms()
     let room = rooms[0]
   end
 
-
   let status = s:lingr.room_show(room)
-  call J6uil#buffer#switch(room, status)
 
+  if g:J6uil_multi_window
+    call J6uil#buffer#layout(rooms)
+  endif
+  call J6uil#buffer#switch(room, status)
   call s:observe_start(s:lingr)
 endfunction
 
-
+"
+"
 function! J6uil#reconnect()
   let room = J6uil#buffer#current_room()
   if room == ''
@@ -145,6 +133,31 @@ endfunction
 
 function! J6uil#say(room, message)
   return s:lingr.say(a:room, a:message)
+endfunction
+
+"
+"
+function! s:new_lingr()
+  try
+    let user = exists('g:J6uil_user')     ? g:J6uil_user     : exists('g:lingr_vim_user')     ? g:lingr_vim_user     : input('user : ')
+    let pass = exists('g:J6uil_password') ? g:J6uil_password : exists('g:lingr_vim_password') ? g:lingr_vim_password : inputsecret('password : ')
+  catch
+    echohl Error
+    echo 'you must define g:J6uil_user or g:lingr_vim_user'
+    echo '                g:J6uil_password or g:lingr_vim_password'
+    echohl None
+    return 0
+  endtry
+  try
+    let s:lingr = J6uil#lingr#new(user, pass)
+  catch
+    call J6uil#disconnect()
+    redraw
+    echohl Error | echo "failed to login \n" . v:exception | echohl None
+    return 0
+  endtry
+
+  return 1
 endfunction
 
 function! s:check_connection()
