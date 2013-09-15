@@ -32,7 +32,7 @@ call s:set('J6uil_empty_separator'       , 0)
 call s:set('J6uil_nickname_length'       , 12)
 call s:set('J6uil_no_default_keymappings', 0)
 call s:set('J6uil_align_message'         , 1)
-call s:set('J6uil_multi_window'          , 1)
+call s:set('J6uil_multi_window'          , 0)
 
 """"""""""""""""""""""""
 "       initialize     "

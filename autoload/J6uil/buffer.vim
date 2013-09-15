@@ -38,8 +38,8 @@ function! J6uil#buffer#layout(rooms)
   setlocal nolist
   setlocal nonu
   setlocal buftype=nofile
-  setfiletype J6uil_members
   setlocal statusline=\ members
+  setfiletype J6uil_members
 
   " rooms
   silent! split  J6uil_rooms
@@ -47,19 +47,11 @@ function! J6uil#buffer#layout(rooms)
   setlocal nolist
   setlocal nonu
   setlocal buftype=nofile
-  setfiletype J6uil_rooms
   setlocal statusline=\ rooms
+  setfiletype J6uil_rooms
 
   10 wincmd |
   execute (len(rooms) + 2) . ' wincmd _'
-  "setlocal modifiable
-  "silent %delete _
-  "call append(0, rooms)
-  "delete _
-  "setlocal nomodified
-  "setlocal nomodifiable
-
-  " to message window
   wincmd l
 endfunction
 
@@ -70,9 +62,7 @@ function! J6uil#buffer#switch(room, status)
   call s:buf_setting()
 
   execute "sign unplace * buffer=" . bufnr("%")
-"  if !exists('b:J6uil_current_room') || b:J6uil_current_room != a:room
-    silent %delete _
-"  endif
+  silent %delete _
 
   let b:J6uil_current_room = a:room
   let b:J6uil_roster = a:status.roster
@@ -316,6 +306,10 @@ function! s:update_presence(presence)
 endfunction
 
 function! s:update_status()
+  if !g:J6uil_multi_window
+    return
+  endif
+
   wincmd h
   " room
   wincmd k

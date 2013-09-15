@@ -36,7 +36,9 @@ function! J6uil#subscribe(room)
 
   let status = s:lingr.room_show(room)
 
-  call J6uil#buffer#layout(rooms)
+  if g:J6uil_multi_window
+    call J6uil#buffer#layout(rooms)
+  endif
   call J6uil#buffer#switch(room, status)
   call s:observe_start(s:lingr)
 endfunction
