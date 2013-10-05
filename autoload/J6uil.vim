@@ -78,6 +78,9 @@ function! J6uil#load_archives(room, oldest_id)
 endfunction
 
 function! J6uil#get_rooms()
+  if !exists('s:lingr')
+    call s:new_lingr()
+  endif
   return s:lingr.get_rooms()
 endfunction
 
