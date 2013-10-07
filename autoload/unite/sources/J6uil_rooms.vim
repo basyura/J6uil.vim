@@ -9,7 +9,6 @@ let s:source = {
       \ 'name': 'J6uil/rooms',
       \ 'action_table'   : {},
       \ 'default_action' : {'common' : 'execute'},
-      \ 'is_listed'      : 0,
       \ }
 
 function! s:source.gather_candidates(args, context)
