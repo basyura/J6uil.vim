@@ -30,6 +30,9 @@ Requirement:
 	cURL
 	http://curl.haxx.se/
 
+	webapi-vim
+	https://github.com/mattn/webapi-vim
+
 	vimproc
 	https://github.com/Shougo/vimproc
 
