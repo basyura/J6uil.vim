@@ -207,39 +207,6 @@ function! s:update(events)
   return counter
 endfunction
 "
-function! s:update_icon(message, line_expr, nickname, cnt)
-  if !s:is_display_icon() || substitute(a:nickname, ' ', '', 'g') == '' || get(s:unconvertibles, a:message.speaker_id, 0)
-    return
-  endif
-
-  let current_dir = getcwd()
-  execute "cd " . g:J6uil_config_dir
-  let ico_path  = g:J6uil_config_dir . '/icon/' . a:message.speaker_id . ".ico"
-  let img_url   = a:message.icon_url
-  let file_name = fnamemodify(img_url, ":t")
-
-  if !filereadable(ico_path)
-    "echo "downloading " . a:message.nickname . "'s avatar ... " . img_url
-    call system("curl -L -O " . img_url)
-    call system("convert " . fnamemodify(img_url, ":t") . " " . ico_path)
-    call delete(file_name)
-    if v:shell_error
-      let s:unconvertibles[a:message.speaker_id] = 1
-      return
-    endif
-    redraw
-  endif
-
-  execute "cd " . current_dir
-
-  try
-    execute ":sign define J6uil_icon_" . a:message.speaker_id . " icon=" . ico_path
-    execute ":sign place 1 line=" . (line(a:line_expr) + a:cnt) . " name=J6uil_icon_" . a:message.speaker_id . " buffer=" . bufnr("%")
-  catch
-    echohl Error | echomsg a:message.nickname . ' ' .  v:exception | echohl None
-  endtry
-endfunction
-"
 function! s:update_message(message, line_expr, cnt)
   " check duplicate message
   if !exists('b:J6uil_latest_message_id')
@@ -297,6 +264,39 @@ function! s:update_message(message, line_expr, cnt)
   endif
 
   return len(list)
+endfunction
+"
+function! s:update_icon(message, line_expr, nickname, cnt)
+  if !s:is_display_icon() || substitute(a:nickname, ' ', '', 'g') == '' || get(s:unconvertibles, a:message.speaker_id, 0)
+    return
+  endif
+
+  let current_dir = getcwd()
+  execute "cd " . g:J6uil_config_dir
+  let ico_path  = g:J6uil_config_dir . '/icon/' . a:message.speaker_id . ".ico"
+  let img_url   = a:message.icon_url
+  let file_name = fnamemodify(img_url, ":t")
+
+  if !filereadable(ico_path)
+    "echo "downloading " . a:message.nickname . "'s avatar ... " . img_url
+    call system("curl -L -O " . img_url)
+    call system("convert " . fnamemodify(img_url, ":t") . " " . ico_path)
+    call delete(file_name)
+    if v:shell_error
+      let s:unconvertibles[a:message.speaker_id] = 1
+      return
+    endif
+    redraw
+  endif
+
+  execute "cd " . current_dir
+
+  try
+    execute ":sign define J6uil_icon_" . a:message.speaker_id . " icon=" . ico_path
+    execute ":sign place 1 line=" . (line(a:line_expr) + a:cnt) . " name=J6uil_icon_" . a:message.speaker_id . " buffer=" . bufnr("%")
+  catch
+    echohl Error | echomsg a:message.nickname . ' ' .  v:exception | echohl None
+  endtry
 endfunction
 "
 "
