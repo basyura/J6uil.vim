@@ -207,7 +207,7 @@ function! s:update(events)
   return counter
 endfunction
 "
-function! s:update_icon(message, line_expr, cnt, nickname)
+function! s:update_icon(message, line_expr, nickname, cnt)
   if !s:is_display_icon() || substitute(a:nickname, ' ', '', 'g') == '' || get(s:unconvertibles, a:message.speaker_id, 0)
     return
   endif
