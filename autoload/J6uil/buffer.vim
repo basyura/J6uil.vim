@@ -151,7 +151,9 @@ function! J6uil#buffer#load_archives(room, messages)
     "execute "normal! " . cnt . "\<Down>"
   endfor
 
-  call append(0, s:config().archive_statement)
+  if getline(1) != s:config().archive_statement
+    call append(0, s:config().archive_statement)
+  endif
 
   let  b:J6uil_oldest_id = a:messages[0].id
   setlocal nomodifiable
