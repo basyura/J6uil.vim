@@ -57,7 +57,15 @@ function! s:lingr.verify_and_relogin()
 endfunction
 
 function! s:lingr.get_rooms()
-  return s:get('user/get_rooms', {'session' : self.session}).rooms
+  let rooms = s:get('user/get_rooms', {'session' : self.session}).rooms
+  if exists('g:J6uil_user_define_rooms') && type(g:J6uil_user_define_rooms) == type([])
+    for room in g:J6uil_user_define_rooms
+      if index(rooms, room) == -1
+        call add(rooms, room)
+      endif
+    endfor
+  endif
+  return rooms
 endfunction
 
 function! s:lingr.room_show(room)
