@@ -52,6 +52,10 @@ command! -nargs=0 J6uilReconnect  call J6uil#reconnect()
 
 command! -nargs=0 J6uilDisconnect call J6uil#disconnect()
 
+command! -nargs=0 J6uilNextRoom   call J6uil#toggle_room(1)
+
+command! -nargs=0 J6uilPrevRoom   call J6uil#toggle_room(-1)
+
 """"""""""""""""""""""""
 "       key maps       "
 """"""""""""""""""""""""
@@ -61,6 +65,10 @@ nnoremap <silent> <Plug>(J6uil_open_say_buffer)   :exe ":silent call J6uil#say#o
 nnoremap <silent> <Plug>(J6uil_reconnect)         :<C-u>J6uilReconnect<CR>
 "
 nnoremap <silent> <Plug>(J6uil_disconnect)        :<C-u>J6uilDisconnect<CR>
+"
+nnoremap <silent> <Plug>(J6uil_next_room)         :<C-u>J6uilNextRoom<CR>
+"
+nnoremap <silent> <Plug>(J6uil_prev_room)         :<C-u>J6uilPrevRoom<CR>
 "
 nnoremap <silent> <Plug>(J6uil_unite_rooms)       :<C-u>Unite J6uil/rooms -buffer-name=J6uil_rooms<CR>
 "
