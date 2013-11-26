@@ -52,9 +52,9 @@ function! J6uil#toggle_room(volume)
   let current_index = index(rooms, room)
   let target_index = current_index + a:volume
   if target_index < 0
-    target_index += rooms_count
+    let target_index += rooms_count
   elseif target_index >= rooms_count
-    target_index -= rooms_count
+    let target_index -= rooms_count
   endif
   let target_room = rooms[target_index]
   call J6uil#subscribe(target_room)
