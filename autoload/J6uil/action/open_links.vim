@@ -6,8 +6,11 @@ function! J6uil#action#open_links#execute()
     if len(matched) == 0
       break
     endif
-    execute "OpenBrowser " . matched[0]
-    let text = substitute(text , matched[0] , "" , "g")
+    let url = matched[0]
+    execute "OpenBrowser " . url
+
+    let url  = substitute(url, '\~' , '\\~', 'g')
+    let text = substitute(text , url , '' , 'g')
   endwhile
 endfunction
 
