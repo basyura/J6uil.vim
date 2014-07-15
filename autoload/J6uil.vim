@@ -1,6 +1,10 @@
 let s:save_cpo = &cpo
 set cpo&vim
 
+let s:V = vital#of('J6uil')
+let s:J = s:V.import('Web.JSON')
+unlet s:V
+
 let s:connect_time = localtime()
 
 let s:config = {
@@ -121,7 +125,7 @@ function! J6uil#__update(res)
       let content = strpart(res, pos+2)
     endif
 
-    let json = webapi#json#decode(content)
+    let json = s:J.decode(content)
   catch
     " normal? error
     if a:res != ''
