@@ -15,7 +15,6 @@ MIT License
 Requires
 --------
 
-- [webapi-vim](https://github.com/mattn/webapi-vim)
 - [vimproc](https://github.com/Shougo/vimproc)
 
 Settings
