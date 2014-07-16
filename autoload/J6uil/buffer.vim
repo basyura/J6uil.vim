@@ -4,6 +4,7 @@ set cpo&vim
 
 let s:Vital    = vital#of('J6uil')
 let s:DateTime = s:Vital.import('DateTime')
+let s:Process  = s:Vital.import('Process')
 
 let s:last_bufnr      = 0
 let s:before_msg_user = ''
@@ -279,8 +280,8 @@ function! s:update_icon(message, line_expr, nickname, cnt)
 
   if !filereadable(ico_path)
     "echo "downloading " . a:message.nickname . "'s avatar ... " . img_url
-    call system("curl -L -O " . img_url)
-    call system("convert " . fnamemodify(img_url, ":t") . " " . ico_path)
+    call s:Process.system("curl -L -O " . img_url)
+    call s:Process.system("convert " . fnamemodify(img_url, ":t") . " " . ico_path)
     call delete(file_name)
     if v:shell_error
       let s:unconvertibles[a:message.speaker_id] = 1
