@@ -1,10 +1,10 @@
 let s:save_cpo = &cpo
 set cpo&vim
 
-let s:V = vital#of('J6uil')
-let s:H = s:V.import('Web.HTTP')
-let s:J = s:V.import('Web.JSON')
-unlet s:V
+let s:Vital    = vital#of('J6uil')
+let s:Web_HTTP = s:Vital.import('Web.HTTP')
+let s:Web_JSON = s:Vital.import('Web.JSON')
+unlet s:Vital
 
 let s:api_root = 'http://lingr.com/api/'
 
@@ -126,8 +126,8 @@ function! s:lingr.get_archives(room, before)
 endfunction
 
 function! s:get(url, param)
-  let res = s:H.get(s:api_root . a:url, a:param)
-  return s:J.decode(res.content)
+  let res = s:Web_HTTP.get(s:api_root . a:url, a:param)
+  return s:Web_JSON.decode(res.content)
 endfunction
 
 function! s:post_async(url, query, headdata)
@@ -136,7 +136,7 @@ function! s:post_async(url, query, headdata)
   let headdata = a:headdata
   let method   = "POST"
   if type(postdata) == 4
-    let postdatastr = s:H.encodeURI(postdata)
+    let postdatastr = s:Web_HTTP.encodeURI(postdata)
   else
     let postdatastr = postdata
   endif
@@ -161,7 +161,7 @@ function! s:post_async(url, query, headdata)
 
   augroup J6uil-async-receive
     execute "autocmd! CursorHold,CursorHoldI * call"
-          \ "s:receive_vimproc_result('" . s:J.encode({"file" : file})  . "')"
+          \ "s:receive_vimproc_result('" . s:Web_JSON.encode({"file" : file})  . "')"
   augroup END
 endfunction
 
@@ -188,7 +188,7 @@ function! s:receive_vimproc_result(param)
     echom v:throwpoint
   endtry
 
-  let param = s:J.decode(a:param)
+  let param = s:Web_JSON.decode(a:param)
 
   call delete(param.file)
 
@@ -221,8 +221,8 @@ function! s:has_vimproc()
 endfunction
 
 function! s:post(url, param)
-  let res = s:H.post(s:api_root . a:url, a:param)
-  return s:J.decode(res.content)
+  let res = s:Web_HTTP.post(s:api_root . a:url, a:param)
+  return s:Web_JSON.decode(res.content)
 endfunction
 
 
