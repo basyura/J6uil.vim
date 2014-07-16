@@ -169,11 +169,11 @@ function! s:receive_vimproc_result(param)
 
   try
     if !vimproc.stdout.eof
-      let s:result .= vimproc.stdout.read()
+      let s:result .= vimproc.stdout.read(1000, 0)
     endif
 
     if !vimproc.stderr.eof
-      let s:result .= vimproc.stderr.read()
+      let s:result .= vimproc.stderr.read(1000, 0)
     endif
 
     if !(vimproc.stdout.eof && vimproc.stderr.eof)

@@ -66,11 +66,11 @@ function! s:thread_update(thread)
 
     try
         if !vimproc.stdout.eof
-            let thread.result .= vimproc.stdout.read()
+            let thread.result .= vimproc.stdout.read(1000, 0)
         endif
 
         if !vimproc.stderr.eof
-            let thread.result .= vimproc.stderr.read()
+            let thread.result .= vimproc.stderr.read(1000, 0)
         endif
 
         if !(vimproc.stdout.eof && vimproc.stderr.eof)
