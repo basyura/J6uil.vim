@@ -62,6 +62,9 @@ function! s:lingr.verify_and_relogin()
 endfunction
 
 function! s:lingr.get_rooms()
+  if exists('s:J6uil_room_cache')
+    return s:J6uil_room_cache
+  endif
   let rooms = s:get('user/get_rooms', {'session' : self.session}).rooms
   if exists('g:J6uil_user_define_rooms') && type(g:J6uil_user_define_rooms) == type([])
     for room in g:J6uil_user_define_rooms
@@ -70,6 +73,7 @@ function! s:lingr.get_rooms()
       endif
     endfor
   endif
+  let s:J6uil_room_cache = rooms
   return rooms
 endfunction
 

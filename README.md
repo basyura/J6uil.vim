@@ -35,7 +35,7 @@ Settings
     let g:J6uil_display_icon     = 0
     let g:J6uil_display_interval = 0
     let g:J6uil_updatetime       = 1000
-    let g:J6uil_multi_window     = 0
+    let g:J6uil_multi_window     = 1
 
 Usage
 -----

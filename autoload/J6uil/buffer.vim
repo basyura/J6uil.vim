@@ -20,6 +20,9 @@ function! J6uil#buffer#current_room()
   return s:cacheMgr.current_room()
 endfunction
 
+function! J6uil#buffer#has_cache(room)
+  return s:cacheMgr.has_cache(a:room)
+endfunction
 "
 "
 function! J6uil#buffer#layout(rooms)
@@ -67,11 +70,20 @@ function! J6uil#buffer#switch(room, status)
   silent %delete _
 
   let b:J6uil_current_room = a:room
-  let b:J6uil_roster = a:status.roster
-  call s:cacheMgr.cache_presence(a:room, a:status.roster.members)
+  if !empty(a:status)
+    let b:J6uil_roster = a:status.roster
+    call s:cacheMgr.cache_presence(a:room, a:status.roster.members)
+  endif
   call s:update_status()
 
-  for message in a:status.messages
+  let cache = s:cacheMgr.get_cache(a:room)
+  if len(cache.messages) == 0 && !empty(a:status)
+    for msg in a:status.messages
+      call s:cacheMgr.cache_message(a:room, msg, 0)
+    endfor
+  end
+
+  for message in s:cacheMgr.get_cache(a:room).messages
     call s:update_message(message, '$', 0)
   endfor
 
@@ -394,6 +406,9 @@ endfunction
 "
 function! s:cache(message, is_read)
   let message = a:message
+
+  " todo integrate with count_up_unread
+  call s:cacheMgr.cache_message(message.room, message, a:is_read)
 
   if !a:is_read
     call s:cacheMgr.count_up_unread(message.room)

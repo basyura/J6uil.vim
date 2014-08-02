@@ -29,7 +29,7 @@ function! J6uil#subscribe(room)
       return
     endif
   else
-    call s:lingr.verify_and_relogin()
+    "call s:lingr.verify_and_relogin()
   endif
 
   let room  = a:room
@@ -38,7 +38,11 @@ function! J6uil#subscribe(room)
     let room = rooms[0]
   end
 
-  let status = s:lingr.room_show(room)
+  if !J6uil#buffer#has_cache(a:room)
+    let status = s:lingr.room_show(room)
+  else
+    let status = {}
+  endif
 
   if g:J6uil_multi_window
     call J6uil#buffer#layout(rooms)

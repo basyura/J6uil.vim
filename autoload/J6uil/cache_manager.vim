@@ -27,15 +27,28 @@ function! s:cache_manager.current_room(...)
 endfunction
 "
 "
+function! s:cache_manager.has_cache(room)
+  if !has_key(self._cache, a:room)
+    return 0
+  end
+
+  return !empty(self._cache[a:room].messages)
+endfunction
+"
+"
 function! s:cache_manager.get_cache(...)
   if a:0
-    return self.get_cache(a:1)
+    return self._get_cache(a:1)
   endif
 
   retur values(self._cache)
   
 endfunction
 
+function! s:cache_manager.cache_message(room, message, is_read)
+  let message_cache = self._get_cache(a:room).messages
+  call add(message_cache, a:message)
+endfunction
 "
 "
 function! s:cache_manager.get_unread_count(room)
