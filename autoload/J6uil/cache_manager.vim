@@ -46,8 +46,10 @@ function! s:cache_manager.get_cache(...)
 endfunction
 
 function! s:cache_manager.cache_message(room, message, is_read)
+  let message = a:message
   let message_cache = self._get_cache(a:room).messages
-  call add(message_cache, a:message)
+  let message.is_read = a:is_read
+  call add(message_cache, message)
 endfunction
 "
 "

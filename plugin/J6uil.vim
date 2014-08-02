@@ -13,6 +13,7 @@ endfunction
 
 function! s:start(...)
   let room = a:0 ? a:1 : ''
+  call J6uil#observe_start()
   call J6uil#subscribe(room)
 endfunction
 

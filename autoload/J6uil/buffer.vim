@@ -77,18 +77,33 @@ function! J6uil#buffer#switch(room, status)
   call s:update_status()
 
   let cache = s:cacheMgr.get_cache(a:room)
+  " first get message
   if len(cache.messages) == 0 && !empty(a:status)
     for msg in a:status.messages
-      call s:cacheMgr.cache_message(a:room, msg, 0)
+      call s:cacheMgr.cache_message(a:room, msg, 1)
     endfor
   end
 
+  let is_added_line = 0
   for message in s:cacheMgr.get_cache(a:room).messages
+    if !is_added_line && !get(message, 'is_read', 1)
+      call append(line('$'), '')
+      call append(line('$'), '-- room : ' . a:room . ' --')
+      call append(line('$'), '')
+      let is_added_line = 1
+      "delete _
+    endif
+    let message.is_read = 1
     call s:update_message(message, '$', 0)
   endfor
 
-  call append(line('$'), '-- room : ' . a:room . ' --')
+  if !is_added_line
+    call append(line('$'), '')
+    call append(line('$'), '-- room : ' . a:room . ' --')
+    call append(line('$'), '')
+  endif
   delete _
+
 
   execute "normal! G"
   setlocal nomodified

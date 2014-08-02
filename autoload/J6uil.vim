@@ -7,6 +7,8 @@ unlet s:Vital
 
 let s:connect_time = localtime()
 
+let s:lingr = {}
+
 let s:config = {
   \ 'buf_name'          : 'J6uil',
   \ 'archive_statement' : '-- archive --',
@@ -24,14 +26,6 @@ function! J6uil#subscribe(room)
     autocmd! CursorHold * call s:check_connection()
   augroup END
 
-  if !exists('s:lingr')
-    if !s:new_lingr()
-      return
-    endif
-  else
-    "call s:lingr.verify_and_relogin()
-  endif
-
   let room  = a:room
   let rooms = J6uil#get_rooms()
   if room == ''
@@ -48,7 +42,6 @@ function! J6uil#subscribe(room)
     call J6uil#buffer#layout(rooms)
   endif
   call J6uil#buffer#switch(room, status)
-  call s:observe_start(s:lingr)
 endfunction
 
 "
@@ -77,13 +70,14 @@ function! J6uil#reconnect()
     return
   endif
   " todo
-  call J6uil#buffer#switch(room, {
-        \ 'messages' : [], 
-        \ 'roster'   : {'members' : [], 'bots' : []}
-        \ })
-  set modifiable
-  silent %delete _
-  call J6uil#subscribe(room)
+  "call J6uil#buffer#switch(room, {
+        "\ 'messages' : [], 
+        "\ 'roster'   : {'members' : [], 'bots' : []}
+        "\ })
+  "set modifiable
+  "silent %delete _
+  "call J6uil#subscribe(room)
+  execute ":J6uil " . room
   echohl Error | echo "reconnected to " . room  | echohl None
 endfunction
 
@@ -103,18 +97,14 @@ function! J6uil#load_archives(room, oldest_id)
 endfunction
 
 function! J6uil#get_rooms()
-  if !exists('s:lingr')
-    call s:new_lingr()
-  endif
   return s:lingr.get_rooms()
 endfunction
 
-function! s:observe_start(lingr)
-  " めちゃくちゃになってきたな・・・
-  let lingr = a:lingr
+function! J6uil#observe_start()
+  let s:lingr = s:new_lingr()
   call J6uil#thread#release()
-  let s:counter = lingr.subscribe()
-  call lingr.observe(s:counter, function('J6uil#__update'))
+  let s:counter = s:lingr.subscribe()
+  call s:lingr.observe(s:counter, function('J6uil#__update'))
   let s:connect_time = localtime()
 endfunction
 
@@ -177,15 +167,13 @@ function! s:new_lingr()
     return 0
   endtry
   try
-    let s:lingr = J6uil#lingr#new(user, pass)
+    return J6uil#lingr#new(user, pass)
   catch
     call J6uil#disconnect()
     redraw
     echohl Error | echo "failed to login \n" . v:exception | echohl None
-    return 0
+    return {}
   endtry
-
-  return 1
 endfunction
 
 function! s:check_connection()
