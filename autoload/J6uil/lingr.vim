@@ -81,11 +81,13 @@ function! s:lingr.room_show(room)
 endfunction
 
 function! s:lingr.say(room, msg)
+  let msg = iconv(a:msg, &encoding, 'utf8')
+
   if s:has_vimproc()
     call s:post_async('room/say', {
           \ 'session' : self.session,
           \ 'room'    : a:room,
-          \ 'text'    : a:msg,
+          \ 'text'    : msg,
           \ },{})
     return 1
   end
@@ -93,7 +95,7 @@ function! s:lingr.say(room, msg)
   return s:get('room/say', {
         \ 'session' : self.session,
         \ 'room'    : a:room,
-        \ 'text'    : a:msg,
+        \ 'text'    : msg,
         \ }).status == 'ok'
 endfunction
 
