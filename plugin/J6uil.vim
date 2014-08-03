@@ -55,7 +55,7 @@ command! -nargs=0 J6uilPrevRoom   call J6uil#toggle_room(-1)
 "       key maps       "
 """"""""""""""""""""""""
 "
-nnoremap <silent> <Plug>(J6uil_open_say_buffer)   :exe ":silent call J6uil#say#open(J6uil#buffer#current_room())"<CR>
+nnoremap <silent> <Plug>(J6uil_open_say_buffer)   :exe ":silent call J6uil#say#open(J6uil#current_room())"<CR>
 "
 nnoremap <silent> <Plug>(J6uil_reconnect)         :<C-u>J6uilReconnect<CR>
 "

@@ -10,18 +10,12 @@ let s:last_bufnr      = 0
 let s:before_msg_user = ''
 let s:unconvertibles  = {}
 
-let s:cacheMgr = J6uil#cache_manager#new()
+function! J6uil#buffer#initialize(cacheMgr)
+  let s:cacheMgr = a:cacheMgr
+endfunction
 
 function! s:config()
   return J6uil#config()
-endfunction
-
-function! J6uil#buffer#current_room()
-  return s:cacheMgr.current_room()
-endfunction
-
-function! J6uil#buffer#has_cache(room)
-  return s:cacheMgr.has_cache(a:room)
 endfunction
 "
 "
@@ -61,8 +55,7 @@ function! J6uil#buffer#layout(rooms)
 endfunction
 
 
-function! J6uil#buffer#switch(room, status)
-  call s:cacheMgr.current_room(a:room)
+function! J6uil#buffer#switch(room)
   call s:switch_buffer()
   call s:buf_setting()
 
@@ -70,19 +63,7 @@ function! J6uil#buffer#switch(room, status)
   silent %delete _
 
   let b:J6uil_current_room = a:room
-  if !empty(a:status)
-    let b:J6uil_roster = a:status.roster
-    call s:cacheMgr.cache_presence(a:room, a:status.roster.members)
-  endif
   call s:update_status()
-
-  let cache = s:cacheMgr.get_cache(a:room)
-  " first get message
-  if len(cache.messages) == 0 && !empty(a:status)
-    for msg in a:status.messages
-      call s:cacheMgr.cache_message(a:room, msg, 1)
-    endfor
-  end
 
   let is_added_line = 0
   for message in s:cacheMgr.get_cache(a:room).messages
@@ -211,24 +192,17 @@ endfunction
 "
 function! s:update(events)
   let counter = 0
+
   for event in  a:events
     if has_key(event, 'message')
-      if event.message.room != s:cacheMgr.current_room()
-        call s:cache(event.message, 0)
-        "echo s:truncate('[' . event.message.room . '] ' . event.message.nickname . ' : ' . split(event.message.text, '\n')[0], winwidth(0) - 20)
-        "
-      else
-        call s:cache(event.message, 1)
+      if event.message.room == s:cacheMgr.current_room()
         call s:update_message(event.message, '$', 0)
         let counter += 1
       endif
-      "redraw!
-      "echo J6uil#buffer#statusline()
     elseif has_key(event, 'presence')
-      if event.presence.room != s:cacheMgr.current_room()
-        continue
+      if event.presence.room == s:cacheMgr.current_room()
+        call s:update_presence(event.presence)
       endif
-      call s:update_presence(event.presence)
     endif
   endfor
 
@@ -329,9 +303,6 @@ endfunction
 "
 "
 function! s:update_presence(presence)
-  " cache user status
-  call s:cacheMgr.cache_presence(a:presence.room, a:presence)
-
   if g:J6uil_echo_presence
     redraw!
     echo a:presence.text
@@ -416,18 +387,6 @@ function! J6uil#buffer#_member_sorter(i1, i2)
 
 
 	return a:i1.name == a:i2.name ? 0 : a:i1.name > a:i2.name ? -1 : 1
-endfunction
-"
-"
-function! s:cache(message, is_read)
-  let message = a:message
-
-  " todo integrate with count_up_unread
-  call s:cacheMgr.cache_message(message.room, message, a:is_read)
-
-  if !a:is_read
-    call s:cacheMgr.count_up_unread(message.room)
-  endif
 endfunction
 "
 "

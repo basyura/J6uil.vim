@@ -15,7 +15,6 @@ function! J6uil#config()
   \ 'archive_statement' : '-- archive --',
   \ 'blank_nickname'    : '                ',
   \ }
-
 endfunction
 "
 " a[0] : room
@@ -28,6 +27,8 @@ function! J6uil#start(...)
   let s:cacheMgr = J6uil#cache_manager#new()
   let s:counter  = s:lingr.subscribe()
   let s:connect_time = localtime()
+  " todo
+  call J6uil#buffer#initialize(s:cacheMgr)
   " connect to lingr
   call s:lingr.observe(s:counter, function('J6uil#__update'))
   " setup buffer
@@ -44,20 +45,25 @@ function! J6uil#start(...)
     autocmd! CursorHold * call s:check_connection()
   augroup END
 endfunction
-
+"
+"
 function! J6uil#subscribe(room)
-  if !J6uil#buffer#has_cache(a:room)
+  " todo
+  call s:cacheMgr.current_room(a:room)
+  if !s:cacheMgr.has_cache(a:room)
     let status = s:lingr.room_show(a:room)
-  else
-    let status = {}
+    "let b:J6uil_roster = a:status.roster
+    call s:cacheMgr.cache_presence(a:room, status.roster.members)
+    for msg in status.messages
+      call s:cacheMgr.cache_message(a:room, msg, 1)
+    endfor
   endif
-  call J6uil#buffer#switch(a:room, status)
+  call J6uil#buffer#switch(a:room)
 endfunction
-
 "
 "
 function! J6uil#toggle_room(volume)
-  let room = J6uil#buffer#current_room()
+  let room = s:cacheMgr.current_room()
   let rooms = s:lingr.get_rooms()
   let rooms_count = len(rooms)
   let current_index = index(rooms, room)
@@ -74,19 +80,7 @@ endfunction
 "
 "
 function! J6uil#reconnect()
-  let room = J6uil#buffer#current_room()
-  if room == ''
-    echo 'no connection'
-    return
-  endif
-  " todo
-  "call J6uil#buffer#switch(room, {
-        "\ 'messages' : [], 
-        "\ 'roster'   : {'members' : [], 'bots' : []}
-        "\ })
-  "set modifiable
-  "silent %delete _
-  "call J6uil#subscribe(room)
+  let room = s:cacheMgr.current_room()
   execute ":J6uil " . room
   echohl Error | echo "reconnected to " . room  | echohl None
 endfunction
@@ -136,7 +130,9 @@ function! J6uil#__update(res)
     return
   endif
 
+  " to cacheMgr
   if has_key(json, 'events')
+    call s:cacheMgr.cache(json.events)
     call J6uil#buffer#update(json)
   endif
 
@@ -208,6 +204,10 @@ function! s:check_connection()
     sleep 2
     call s:check_connection()
   endtry
+endfunction
+
+function! J6uil#current_room()
+  return s:cacheMgr.current_room()
 endfunction
 
 function! J6uil#action(name)

@@ -45,6 +45,20 @@ function! s:cache_manager.get_cache(...)
   
 endfunction
 
+function! s:cache_manager.cache(events)
+
+  for event in  a:events
+    if has_key(event, 'message')
+      call self.cache_message(event.message.room, event.message, event.message.room == self.current_room())
+      if event.message.room != self.current_room()
+        call self.count_up_unread(event.message.room)
+      endif
+    elseif has_key(event, 'presence')
+      call self.cache_presence(event.presence.room, event.presence)
+    endif
+  endfor
+endfunction
+
 function! s:cache_manager.cache_message(room, message, is_read)
   let message = a:message
   let message_cache = self._get_cache(a:room).messages
