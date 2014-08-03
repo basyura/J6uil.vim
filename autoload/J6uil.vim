@@ -6,49 +6,59 @@ let s:Web_JSON = s:Vital.import('Web.JSON')
 unlet s:Vital
 
 let s:connect_time = localtime()
+let s:lingr        = {}
+let s:cacheMgr     = {}
 
-let s:lingr = {}
-
-let s:config = {
+function! J6uil#config()
+  return {
   \ 'buf_name'          : 'J6uil',
   \ 'archive_statement' : '-- archive --',
   \ 'blank_nickname'    : '                ',
   \ }
 
-function! J6uil#config()
-  return s:config
 endfunction
+"
+" a[0] : room
+"
+function! J6uil#start(...)
 
-function! J6uil#subscribe(room)
-
+  call J6uil#thread#release()
+  " setup
+  let s:lingr    = s:new_lingr()
+  let s:cacheMgr = J6uil#cache_manager#new()
+  let s:counter  = s:lingr.subscribe()
+  let s:connect_time = localtime()
+  " connect to lingr
+  call s:lingr.observe(s:counter, function('J6uil#__update'))
+  " setup buffer
+  let rooms = s:lingr.get_rooms()
+  let room  = a:0 ? a:1 : rooms[0]
+  if g:J6uil_multi_window
+    call J6uil#buffer#layout(rooms)
+  endif
+  " change room
+  call J6uil#subscribe(room)
+  " check connection
   augroup J6uil
     autocmd!
     autocmd! CursorHold * call s:check_connection()
   augroup END
+endfunction
 
-  let room  = a:room
-  let rooms = J6uil#get_rooms()
-  if room == ''
-    let room = rooms[0]
-  end
-
+function! J6uil#subscribe(room)
   if !J6uil#buffer#has_cache(a:room)
-    let status = s:lingr.room_show(room)
+    let status = s:lingr.room_show(a:room)
   else
     let status = {}
   endif
-
-  if g:J6uil_multi_window
-    call J6uil#buffer#layout(rooms)
-  endif
-  call J6uil#buffer#switch(room, status)
+  call J6uil#buffer#switch(a:room, status)
 endfunction
 
 "
 "
 function! J6uil#toggle_room(volume)
   let room = J6uil#buffer#current_room()
-  let rooms = J6uil#get_rooms()
+  let rooms = s:lingr.get_rooms()
   let rooms_count = len(rooms)
   let current_index = index(rooms, room)
   let target_index = current_index + a:volume
@@ -96,17 +106,7 @@ function! J6uil#load_archives(room, oldest_id)
   call J6uil#buffer#load_archives(a:room, messages)
 endfunction
 
-function! J6uil#get_rooms()
-  return s:lingr.get_rooms()
-endfunction
 
-function! J6uil#observe_start()
-  let s:lingr = s:new_lingr()
-  call J6uil#thread#release()
-  let s:counter = s:lingr.subscribe()
-  call s:lingr.observe(s:counter, function('J6uil#__update'))
-  let s:connect_time = localtime()
-endfunction
 
 function! J6uil#__update(res)
   try

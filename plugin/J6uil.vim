@@ -11,12 +11,6 @@ function! s:set(key, default)
   endif
 endfunction
 
-function! s:start(...)
-  let room = a:0 ? a:1 : ''
-  call J6uil#observe_start()
-  call J6uil#subscribe(room)
-endfunction
-
 """"""""""""""""""""""""
 "       variables      "
 """"""""""""""""""""""""
@@ -47,7 +41,7 @@ endif
 "       commands       "
 """"""""""""""""""""""""
 
-command! -nargs=? -complete=custom,J6uil#complete#room J6uil call s:start(<f-args>)
+command! -nargs=? -complete=custom,J6uil#complete#room J6uil call J6uil#start(<f-args>)
 
 command! -nargs=0 J6uilReconnect  call J6uil#reconnect()
 
