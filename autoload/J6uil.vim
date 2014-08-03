@@ -55,7 +55,7 @@ function! J6uil#subscribe(room)
     "let b:J6uil_roster = a:status.roster
     call s:cacheMgr.cache_presence(a:room, status.roster.members)
     for msg in status.messages
-      call s:cacheMgr.cache_message(a:room, msg, 1)
+      call s:cacheMgr.cache_message(msg, 1)
     endfor
   endif
   call J6uil#buffer#switch(a:room)
@@ -82,6 +82,8 @@ endfunction
 function! J6uil#reconnect()
   let room = s:cacheMgr.current_room()
   execute ":J6uil " . room
+  " re get current room. room maybe blank.
+  let room = s:cacheMgr.current_room()
   echohl Error | echo "reconnected to " . room  | echohl None
 endfunction
 

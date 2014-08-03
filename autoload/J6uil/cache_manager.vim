@@ -1,3 +1,4 @@
+scriptencoding utf-8
 "
 "
 function! J6uil#cache_manager#new()
@@ -46,22 +47,26 @@ function! s:cache_manager.get_cache(...)
 endfunction
 
 function! s:cache_manager.cache(events)
-
   for event in  a:events
-    if has_key(event, 'message')
-      call self.cache_message(event.message.room, event.message, event.message.room == self.current_room())
+    if has_key(event, 'presence')
+      call self.cache_presence(event.presence.room, event.presence)
+    elseif has_key(event, 'message')
+      " 新規取得したメッセージだけ表示されてしまうので、
+      " まだ API 経由のメッセージ取得していない場合はキャッシュしない
+      if self.has_cache(event.message.room)
+        call self.cache_message(event.message, event.message.room == self.current_room())
+      endif
       if event.message.room != self.current_room()
         call self.count_up_unread(event.message.room)
       endif
-    elseif has_key(event, 'presence')
-      call self.cache_presence(event.presence.room, event.presence)
     endif
   endfor
 endfunction
 
-function! s:cache_manager.cache_message(room, message, is_read)
+function! s:cache_manager.cache_message(message, is_read)
+  let room    = a:message.room
   let message = a:message
-  let message_cache = self._get_cache(a:room).messages
+  let message_cache = self._get_cache(room).messages
   let message.is_read = a:is_read
   call add(message_cache, message)
 endfunction
