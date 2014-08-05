@@ -128,7 +128,12 @@ function! s:lingr.get_archives(room, before)
 endfunction
 
 function! s:get(url, param)
-  let res = s:Web_HTTP.get(s:api_root . a:url, a:param)
+  let res = s:Web_HTTP.request({
+        \ 'url'     : s:api_root . a:url,
+        \ 'param'   : a:param,
+        \ 'headers' : {},
+        \ 'client'  : 'curl',
+        \ })
   return s:Web_JSON.decode(res.content)
 endfunction
 
