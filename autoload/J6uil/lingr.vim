@@ -136,7 +136,7 @@ function! s:get(url, param)
         \ 'url'     : s:api_root . a:url,
         \ 'param'   : a:param,
         \ 'headers' : {},
-        \ 'client'  : 'curl',
+        \ 'client'  : ['curl', 'wget', 'python'],
         \ })
   return s:Web_JSON.decode(res.content)
 endfunction
