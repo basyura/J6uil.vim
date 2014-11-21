@@ -274,7 +274,7 @@ function! s:update_icon(message, line_expr, nickname, cnt)
 
   let current_dir = getcwd()
   execute "cd " . g:J6uil_config_dir
-  let ico_path  = g:J6uil_config_dir . '/icon/' . a:message.speaker_id . ".ico"
+  let ico_path  = substitute(g:J6uil_config_dir, '\\', '/', 'g') . '/icon/' . a:message.speaker_id . ".ico"
   let img_url   = a:message.icon_url
   let file_name = fnamemodify(img_url, ":t")
 
