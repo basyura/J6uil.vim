@@ -174,7 +174,9 @@ function! s:new_lingr()
   endtry
 endfunction
 
-function! s:check_connection()
+function! s:check_connection(...)
+  let retry_count = get(a:000, 0, g:J6uil_retry_count)
+
   silent! call feedkeys("g\<Esc>", "n")
   " debug
   if g:J6uil_debug_mode
@@ -201,10 +203,16 @@ function! s:check_connection()
     call J6uil#reconnect()
   catch
     redraw
-    echohl Error | echo "retried ... "  | echohl None
-    call J6uil#buffer#append_message('reconnecting ...')
-    sleep 2
-    call s:check_connection()
+    if retry_count > 0
+      let next_trying = g:J6uil_retry_count - retry_count + 1
+      echohl Error | echo "retried ... (" next_trying "/" g:J6uil_retry_count ")"  | echohl None
+      call J6uil#buffer#append_message('reconnecting ...')
+      sleep 2
+      call s:check_connection(retry_count - 1)
+    else
+      echohl Error | echo "failed to reconnect" | echohl None
+      call J6uil#disconnect()
+    endif
   endtry
 endfunction
 
