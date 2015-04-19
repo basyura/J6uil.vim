@@ -228,7 +228,13 @@ function! s:has_vimproc()
 endfunction
 
 function! s:post(url, param)
-  let res = s:Web_HTTP.post(s:api_root . a:url, a:param)
+  let res = s:Web_HTTP.request({
+        \ 'method'  : 'POST',
+        \ 'url'     : s:api_root . a:url,
+        \ 'param'   : a:param,
+        \ 'headers' : {},
+        \ 'client'  : ['curl', 'wget', 'python'],
+        \ })
   return s:Web_JSON.decode(res.content)
 endfunction
 

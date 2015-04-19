@@ -172,6 +172,9 @@ g:J6uil_empty_separator				*g:J6uil_empty_separator*
 g:J6uil_multi_window				*g:J6uil_multi_window*
 		display room and user status.
 		default : 0
+
+g:J6uil_retry_count				*g:J6uil_retry_count*
+		limit of retrying when there is no network.
 ==============================================================================
 BUFFERES 					*J6uil-bufferes*
 
