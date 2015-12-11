@@ -12,7 +12,7 @@ syntax match J6uil_time " \d\d/\d\d \d\d:\d\d$" contains=J6uil_time
 syntax match J6uil_appendix "\[\[.\{-1,}\]\]" contains=J6uil_appendix_block
 syntax match J6uil_appendix_block /\[\[/ contained conceal
 syntax match J6uil_appendix_block /\]\]/ contained conceal
-syntax match J6uil_link "https\?://[0-9A-Za-z_#?~=\-+%\.\/:&!]\+"
+syntax match J6uil_link "https\?://\%([0-9A-Za-z.-]\+\|\[[0-9A-Fa-f:]\+\]\)\%(:[0-9]\+\)\?\%(/[^[:blank:]\"<>\\^`{|}]\+\)\?"
 syntax match J6uil_separator       "^-\+$"
 
 syntax region J6uil_sudden_death start="＿人人" end="ＹＹ￣" contains=J6uil_sudden_death
