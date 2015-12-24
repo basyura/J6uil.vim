@@ -6,9 +6,9 @@ function! J6uil#action#enter#execute()
   endif
 
   let word = expand('<cWORD>')
-  let matched = matchlist(word, 'https\?://[0-9A-Za-z_#?~=\-+%\.\/:!]\+')
-  if len(matched) != 0
-    execute "OpenBrowser " . matched[0]
+  let matched = matchstr(word, 'https\?://\%([0-9A-Za-z.-]\+\|\[[0-9A-Fa-f:]\+\]\)\%(:[0-9]\+\)\?\%(/[^[:blank:]"<>\\^`{|}]\+\)\?')
+  if matched !=# ''
+    execute "OpenBrowser " . matched
     return
   endif
 endfunction
