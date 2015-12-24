@@ -130,7 +130,7 @@ g:J6uil_insert_offline		         	*g:J6uil_insert_offline*
 		default : 0
 
 g:J6uil_insert_online		         	*g:J6uil_insert_online*
-		insert onlin message to buffer.
+		insert online message to buffer.
 		default : 0
 
 g:J6uil_echo_presence                           *g:J6uil_echo_presence*
