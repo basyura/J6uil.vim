@@ -35,7 +35,7 @@ function! J6uil#buffer#layout(rooms)
   silent! only
 
   " members
-  silent! vsplit J6uil_members
+  silent! leftabove vsplit J6uil_members
   setlocal noswapfile
   setlocal nolist
   setlocal nonu
@@ -44,7 +44,7 @@ function! J6uil#buffer#layout(rooms)
   setfiletype J6uil_members
 
   " rooms
-  silent! split  J6uil_rooms
+  silent! leftabove split  J6uil_rooms
   setlocal noswapfile
   setlocal nolist
   setlocal nonu
